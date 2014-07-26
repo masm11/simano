@@ -69,6 +69,20 @@ static gboolean watch_cb(GIOChannel *source, GIOCondition condition, gpointer da
     return TRUE;
 }
 
+static gboolean timeout_cb(gpointer user_data)
+{
+    if (sock >= 0) {
+	if (write(sock, "0", 1) == -1) {
+	    if (errno != EINTR) {
+		popup("write: %s", strerror(errno));
+		refresh_connection();
+	    }
+	}
+    }
+    
+    return TRUE;
+}
+
 static void refresh_connection(void)
 {
  retry:
@@ -139,6 +153,8 @@ int main(int argc, char **argv)
 	usage();
     
     icon = gtk_status_icon_new_from_icon_name("xfce-newmail");
+    
+    g_timeout_add(60 * 1000, timeout_cb, NULL);
     
     refresh_connection();
     
