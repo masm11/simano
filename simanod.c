@@ -13,7 +13,7 @@
 
 #define MAILDIR "Maildir"
 
-static int check(const char *path)
+static int check(const char *path, int isnew)
 {
     DIR *dir;
     
@@ -25,10 +25,15 @@ static int check(const char *path)
     struct dirent *ep;
     int found = 0;
     while ((ep = readdir(dir)) != NULL) {
-	char *p = strstr(ep->d_name, ":2,");
-	if (p != NULL) {
-	    if (strchr(p, 'S') == NULL)
+	if (isnew) {
+	    if (strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0)
 		found = 1;
+	} else {
+	    char *p = strstr(ep->d_name, ":2,");
+	    if (p != NULL) {
+		if (strchr(p, 'S') == NULL)
+		    found = 1;
+	    }
 	}
     }
     
@@ -70,7 +75,7 @@ static void service(int sock)
 	exit(1);
     }
     
-    int has_newmail = check(newdir) || check(curdir);
+    int has_newmail = check(newdir, 1) || check(curdir, 0);
     
     send_status(sock, has_newmail);
     
@@ -104,7 +109,7 @@ static void service(int sock)
 		exit(0);
 		
 	    default:;
-		int new_hasnewmail = check(newdir) || check(curdir);
+		int new_hasnewmail = check(newdir, 1) || check(curdir, 0);
 		if (new_hasnewmail != has_newmail) {
 		    has_newmail = new_hasnewmail;
 		    send_status(sock, has_newmail);
