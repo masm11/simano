@@ -125,7 +125,7 @@ static void connect_to_server(void)
  retry:
     disconnect_from_server();
     
-    struct addrinfo hint, *ai;
+    struct addrinfo hint, *res, *ai;
     
     memset(&hint, 0, sizeof hint);
     hint.ai_family = AF_UNSPEC;
@@ -135,23 +135,30 @@ static void connect_to_server(void)
     char svc[16];
     snprintf(svc, sizeof svc, "%d", port);
     
-    int err = getaddrinfo(server, svc, &hint, &ai);
+    int err = getaddrinfo(server, svc, &hint, &res);
     if (err != 0) {
 	disconnect_from_server();
 	popup("getaddrinfo: %s", gai_strerror(err));
 	goto retry;
     }
     
-    sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-    if (sock == -1) {
-	disconnect_from_server();
-	popup("socket: %s", strerror(errno));
-	goto retry;
+    for (ai = res; ai != NULL; ai = ai->ai_next) {
+	sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+	if (sock == -1)
+	    continue;
+	
+	if (connect(sock, ai->ai_addr, ai->ai_addrlen) != -1)
+	    break;
+	
+	close(sock);
+	sock = -1;
     }
     
-    if (connect(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+    freeaddrinfo(res);
+    
+    if (ai == NULL) {
 	disconnect_from_server();
-	popup("connect: %s", strerror(errno));
+	popup("connect: Connection failed.");
 	goto retry;
     }
     
