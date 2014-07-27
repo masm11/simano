@@ -1,5 +1,5 @@
 all:
-	echo Use make simano or make simanod.
+	@echo Use make simano or make simanod.
 
 clean:
 	rm -f simano simanod
