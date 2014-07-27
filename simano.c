@@ -78,7 +78,8 @@ static void update(void)
 	connect_to_server();
 	break;
     default:
-	gtk_status_icon_set_visible(icon, buf[0] != '0');
+	gtk_status_icon_set_from_icon_name(icon,
+		buf[0] != '0' ? "xfce-newmail" : "xfce-nomail");
 	break;
     }
 }
@@ -188,8 +189,9 @@ int main(int argc, char **argv)
     if (server == NULL || port == 0)
 	usage();
     
-    icon = gtk_status_icon_new_from_icon_name("xfce-newmail");
-    gtk_status_icon_set_visible(icon, FALSE);
+    icon = gtk_status_icon_new_from_icon_name("xfce-nomail");
+    gtk_status_icon_set_tooltip_text(icon,
+	    g_strdup_printf("%s:%d", server, port));
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     
