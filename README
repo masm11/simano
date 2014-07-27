@@ -3,7 +3,7 @@ Simple Mail Notification
 はじめに
 
   これはネットワーク経由でメール通知を受け取るプログラムです。
-  メールが来たら通知エリアにアイコンが表示されます。
+  メールが来たら通知エリアのアイコンが変わります。
 
   "simano" は SImple MAil NOtification の略です。
 
