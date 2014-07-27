@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/types.h>
-#include <sys/select.h>
+#include <poll.h>
 #include <dirent.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -80,21 +80,23 @@ static void service(int sock)
     send_status(sock, has_newmail);
     
     while (1) {
-	fd_set rfds;
+	struct pollfd fds[2];
 	
-	FD_ZERO(&rfds);
-	FD_SET(sock, &rfds);
-	FD_SET(in, &rfds);
+	fds[0].fd = sock;
+	fds[0].events = POLLIN;
+	fds[0].revents = 0;
+	fds[1].fd = in;
+	fds[1].events = POLLIN;
+	fds[1].revents = 0;
 	
-	int fdw = (sock > in ? sock : in) + 1;
-	if (select(fdw, &rfds, NULL, NULL, NULL) == -1) {
+	if (poll(fds, 2, -1) == -1) {
 	    if (errno == EINTR)
 		continue;
-	    perror("select");
+	    perror("poll");
 	    exit(1);
 	}
 	
-	if (FD_ISSET(in, &rfds)) {
+	if (fds[1].revents & POLLIN) {
 	    char buf[1024];
 	    
 	    switch (read(in, buf, sizeof buf)) {
@@ -117,7 +119,7 @@ static void service(int sock)
 	    }
 	}
 	
-	if (FD_ISSET(sock, &rfds)) {
+	if (fds[0].revents & POLLIN) {
 	    char buf[1024];
 	    switch (read(sock, buf, sizeof buf)) {
 	    case 0:
