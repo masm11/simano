@@ -17,7 +17,8 @@ static guint watch = 0;
 
 static GtkStatusIcon *icon;
 
-static void refresh_connection(void);
+static void disconnect_from_server(void);
+static void connect_to_server(void);
 
 static void popup(const char *fmt, ...)
 {
@@ -50,12 +51,14 @@ static void update(void)
     case -1:
 	if (errno == EINTR)
 	    return;
+	disconnect_from_server();
 	popup("read: %s", strerror(errno));
-	refresh_connection();
+	connect_to_server();
 	break;
     case 0:
+	disconnect_from_server();
 	popup("read: Connection broken.");
-	refresh_connection();
+	connect_to_server();
 	break;
     default:
 	gtk_status_icon_set_visible(icon, buf[0] != '0');
@@ -74,8 +77,9 @@ static gboolean timeout_cb(gpointer user_data)
     if (sock >= 0) {
 	if (write(sock, "0", 1) == -1) {
 	    if (errno != EINTR) {
+		disconnect_from_server();
 		popup("write: %s", strerror(errno));
-		refresh_connection();
+		connect_to_server();
 	    }
 	}
     }
@@ -83,9 +87,8 @@ static gboolean timeout_cb(gpointer user_data)
     return TRUE;
 }
 
-static void refresh_connection(void)
+static void disconnect_from_server(void)
 {
- retry:
     if (watch != 0) {
 	g_source_remove(watch);
 	watch = 0;
@@ -98,6 +101,12 @@ static void refresh_connection(void)
 	close(sock);
 	sock = -1;
     }
+}
+
+static void connect_to_server(void)
+{
+ retry:
+    disconnect_from_server();
     
     struct addrinfo hint, *ai;
     
@@ -111,17 +120,20 @@ static void refresh_connection(void)
     
     int err = getaddrinfo(server, svc, &hint, &ai);
     if (err != 0) {
+	disconnect_from_server();
 	popup("getaddrinfo: %s", gai_strerror(err));
 	goto retry;
     }
     
     sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
     if (sock == -1) {
+	disconnect_from_server();
 	popup("socket: %s", strerror(errno));
 	goto retry;
     }
     
     if (connect(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+	disconnect_from_server();
 	popup("connect: %s", strerror(errno));
 	goto retry;
     }
@@ -153,10 +165,11 @@ int main(int argc, char **argv)
 	usage();
     
     icon = gtk_status_icon_new_from_icon_name("xfce-newmail");
+    gtk_status_icon_set_visible(icon, FALSE);
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     
-    refresh_connection();
+    connect_to_server();
     
     gtk_main();
     
