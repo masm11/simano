@@ -175,7 +175,7 @@ int main(int argc, char **argv)
     daemon(0, 0);
     
     while (1) {
-	int salen = sizeof sa;
+	socklen_t salen = sizeof sa;
 	int s = accept(sock, (struct sockaddr *) &sa, &salen);
 	if (s == -1) {
 	    if (errno != EINTR) {
