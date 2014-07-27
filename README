@@ -30,12 +30,12 @@ Simple Mail Notification
 コンパイル・インストール方法
 
   メールサーバで
-    cc -o simanod simanod.c
-    どこへなりと simanod をコピーしてください。
+    make simanod
+  できた simanod をどこかにコピーしてください。
 
   クライアントで
-    cc `pkg-config --cflags gtk+-2.0` -o simano simano.c `pkg-config --libs gtk+-2.0`
-    simano をどこかにコピーしてください。
+    make simano
+  できた simano をどこかにコピーしてください。
 
 
 実行方法
