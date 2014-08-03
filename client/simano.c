@@ -28,6 +28,23 @@
 
 static gchar *server = NULL;
 static gint port = 0;
+static gchar *newmail = 
+#ifdef HAVE_GNOME
+	"mail-unread";
+#else
+#ifdef HAVE_XFCE4
+	"xfce-newmail";
+#endif
+#endif
+
+static gchar *nomail = 
+#ifdef HAVE_GNOME
+	"mail-read";
+#else
+#ifdef HAVE_XFCE4
+	"xfce-nomail";
+#endif
+#endif
 
 static int sock = -1;
 static GIOChannel *channel = NULL;
@@ -81,9 +98,9 @@ static void update(void)
 	break;
     default:
 	if (buf[0] == '0')
-	    gtk_status_icon_set_from_icon_name(icon, "xfce-nomail");
+	    gtk_status_icon_set_from_icon_name(icon, nomail);
 	else {
-	    gtk_status_icon_set_from_icon_name(icon, "xfce-newmail");
+	    gtk_status_icon_set_from_icon_name(icon, newmail);
 	    notify_notification_show(notification, NULL);
 	}
 	break;
@@ -174,8 +191,10 @@ static void connect_to_server(void)
 }
 
 static GOptionEntry entries[] = {
-    { "server", 's', 0, G_OPTION_ARG_STRING, &server, "server hostname", NULL },
-    { "port",   'p', 0, G_OPTION_ARG_INT,    &port,   "server port",     NULL },
+    { "server",  's', 0, G_OPTION_ARG_STRING, &server,  "server hostname",        NULL },
+    { "port",    'p', 0, G_OPTION_ARG_INT,    &port,    "server port",            NULL },
+    { "newmail", 'N', 0, G_OPTION_ARG_STRING, &newmail, "icon-name for new mail", NULL },
+    { "nomail",  'n', 0, G_OPTION_ARG_STRING, &nomail,  "icon-name for no mail",  NULL },
     { NULL },
 };
 
@@ -200,11 +219,11 @@ int main(int argc, char **argv)
 	usage();
     }
     
-    icon = gtk_status_icon_new_from_icon_name("xfce-nomail");
+    icon = gtk_status_icon_new_from_icon_name(nomail);
     gtk_status_icon_set_tooltip_text(icon,
 	    g_strdup_printf("%s:%d", server, port));
     
-    notification = notify_notification_new("Mail", "You have new mails.", "xfce-newmail");
+    notification = notify_notification_new("Mail", "You have new mails.", newmail);
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     
