@@ -1,3 +1,14 @@
 simano
 simanod
 *~
+client/.deps/
+client/Makefile
+client/Makefile.in
+client/aclocal.m4
+client/autom4te.cache/
+client/config.h
+client/config.log
+client/config.status
+client/configure
+client/simano-simano.o
+client/stamp-h1

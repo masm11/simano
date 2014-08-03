@@ -35,7 +35,7 @@ Simple Mail Notification
   できた simanod をどこかにコピーしてください。
 
   クライアントで
-    make simano
+    ./autogen.sh --prefix=/usr && make simano
   できた simano をどこかにコピーしてください。
 
 
