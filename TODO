@@ -1,0 +1,11 @@
+GNOME
+  - configure.ac の package 名は何も見ればいい?
+  - icon-name は何を使えばいい?
+
+client
+  - po 対応
+
+server
+  - automake 対応
+  - そのうち FreeBSD 対応できるといいな。
+  - mbox とか。
