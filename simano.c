@@ -24,6 +24,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <gtk/gtk.h>
+#include <libnotify/notify.h>
 
 static gchar *server = NULL;
 static gint port = 0;
@@ -33,6 +34,7 @@ static GIOChannel *channel = NULL;
 static guint watch = 0;
 
 static GtkStatusIcon *icon;
+static NotifyNotification *notification;
 
 static void disconnect_from_server(void);
 static void connect_to_server(void);
@@ -78,8 +80,12 @@ static void update(void)
 	connect_to_server();
 	break;
     default:
-	gtk_status_icon_set_from_icon_name(icon,
-		buf[0] != '0' ? "xfce-newmail" : "xfce-nomail");
+	if (buf[0] == '0')
+	    gtk_status_icon_set_from_icon_name(icon, "xfce-nomail");
+	else {
+	    gtk_status_icon_set_from_icon_name(icon, "xfce-newmail");
+	    notify_notification_show(notification, NULL);
+	}
 	break;
     }
 }
@@ -189,9 +195,16 @@ int main(int argc, char **argv)
     if (server == NULL || port == 0)
 	usage();
     
+    if (!notify_init("simano")) {
+	g_print("Notification init error.\n");
+	usage();
+    }
+    
     icon = gtk_status_icon_new_from_icon_name("xfce-nomail");
     gtk_status_icon_set_tooltip_text(icon,
 	    g_strdup_printf("%s:%d", server, port));
+    
+    notification = notify_notification_new("Mail", "You have new mails.", "xfce-newmail");
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     
