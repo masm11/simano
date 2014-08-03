@@ -56,6 +56,10 @@ static NotifyNotification *notification;
 static void disconnect_from_server(void);
 static void connect_to_server(void);
 
+/** メッセージ dialog を作って popup する。
+ * メッセージは可変長引数。
+ * dialog の下部には Retry ボタンがある。
+ */
 static void popup(const char *fmt, ...)
 {
     char msg[1024];
@@ -80,6 +84,15 @@ static void popup(const char *fmt, ...)
     gtk_widget_destroy(dialog);
 }
 
+/** ネットワークからの読み出し状況によって処理する。
+ * 読み出しエラーの場合、EINTR なら戻る。きっとすぐまた来る。
+ *   それ以外の場合は、接続を切って dialog を popup して retry。
+ * 0 バイトの場合、接続が切れた。
+ *   接続を切って dialog を popup して retry。
+ * それ以外の場合は正常。読めた文字に対応する処理を行う。
+ *   gtk-status-icon のアイコンを更新し、notification を
+ *   表示する。
+ */
 static void update(void)
 {
     char buf[1];
@@ -107,12 +120,20 @@ static void update(void)
     }
 }
 
+/** ソケットから(0バイト以上)読み出せる状況にある場合に呼ばれる。
+ *  実際に処理は update() に移譲。
+ */
 static gboolean watch_cb(GIOChannel *source, GIOCondition condition, gpointer data)
 {
     update();
     return TRUE;
 }
 
+/** タイマからの呼び出し関数。
+ * 1バイト書き込んで、エラーがなければ良し、エラーがあれば、
+ * EINTR なら無視。そうでなければサーバから切断し、dialog を
+ * popup し、retry する。
+ */
 static gboolean timeout_cb(gpointer user_data)
 {
     if (sock >= 0) {
@@ -128,6 +149,9 @@ static gboolean timeout_cb(gpointer user_data)
     return TRUE;
 }
 
+/** サーバからの接続処理を行ってに引き受ける。
+ * 関連するリソースを破棄する。
+ */
 static void disconnect_from_server(void)
 {
     if (watch != 0) {
@@ -144,6 +168,12 @@ static void disconnect_from_server(void)
     }
 }
 
+/** サーバに接続する。
+ * 念の為切断処理も入れているが、あまり意味はないだろう。
+ * 名前解決ができなかった場合や、接続ができなかった場合は、
+ * dialog に popup して retry を行う。
+ * 成功したなら、その他のリソースも確保する。
+ */
 static void connect_to_server(void)
 {
  retry:
