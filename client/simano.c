@@ -15,6 +15,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "config.h"
+#include <libintl.h>
+#include "gettext.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -23,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <libnotify/notify.h>
 
@@ -70,9 +74,9 @@ static void popup(const char *fmt, ...)
     va_end(ap);
     
     GtkWidget *dialog = gtk_dialog_new_with_buttons(
-	    "Simple Mail Notifier", NULL,
+	    _("Simple Mail Notifier"), NULL,
 	    GTK_DIALOG_MODAL,
-	    "Retry", GTK_RESPONSE_ACCEPT,
+	    _("Retry"), GTK_RESPONSE_ACCEPT,
 	    NULL);
     gtk_widget_show(dialog);
     
@@ -106,7 +110,7 @@ static void update(void)
 	break;
     case 0:
 	disconnect_from_server();
-	popup("read: Connection broken.");
+	popup("read: %s", _("Connection broken."));
 	connect_to_server();
 	break;
     default:
@@ -212,7 +216,7 @@ static void connect_to_server(void)
     
     if (ai == NULL) {
 	disconnect_from_server();
-	popup("connect: Connection failed.");
+	popup("connect: %s", _("Connection failed."));
 	goto retry;
     }
     
@@ -221,10 +225,10 @@ static void connect_to_server(void)
 }
 
 static GOptionEntry entries[] = {
-    { "server",  's', 0, G_OPTION_ARG_STRING, &server,  "server hostname",        NULL },
-    { "port",    'p', 0, G_OPTION_ARG_INT,    &port,    "server port",            NULL },
-    { "newmail", 'N', 0, G_OPTION_ARG_STRING, &newmail, "icon-name for new mail", NULL },
-    { "nomail",  'n', 0, G_OPTION_ARG_STRING, &nomail,  "icon-name for no mail",  NULL },
+    { "server",  's', 0, G_OPTION_ARG_STRING, &server,  N_("server hostname"),        NULL },
+    { "port",    'p', 0, G_OPTION_ARG_INT,    &port,    N_("server port"),            NULL },
+    { "newmail", 'N', 0, G_OPTION_ARG_STRING, &newmail, N_("icon-name for new mail"), NULL },
+    { "nomail",  'n', 0, G_OPTION_ARG_STRING, &nomail,  N_("icon-name for no mail"),  NULL },
     { NULL },
 };
 
@@ -236,8 +240,13 @@ static void usage(void)
 
 int main(int argc, char **argv)
 {
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    bind_textdomain_codeset(PACKAGE, "UTF-8");
+    textdomain(PACKAGE);
+    
     if (!gtk_init_with_args(&argc, &argv, NULL, entries, NULL, NULL)) {
-	g_print("Invalid option.\n");
+	g_print(_("Invalid option.\n"));
 	usage();
     }
     
@@ -245,7 +254,7 @@ int main(int argc, char **argv)
 	usage();
     
     if (!notify_init("simano")) {
-	g_print("Notification init error.\n");
+	g_print(_("Notification init error.\n"));
 	usage();
     }
     
@@ -253,7 +262,7 @@ int main(int argc, char **argv)
     gtk_status_icon_set_tooltip_text(icon,
 	    g_strdup_printf("%s:%d", server, port));
     
-    notification = notify_notification_new("Mail", "You have new mails.", newmail);
+    notification = notify_notification_new(_("Mail"), _("You have new mails."), newmail);
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     

@@ -30,13 +30,17 @@ Simple Mail Notification
 
 コンパイル・インストール方法
 
-  メールサーバで
+  メールサーバで server ディレクトリで、
     make simanod
   できた simanod をどこかにコピーしてください。
 
-  クライアントで
-    ./autogen.sh --prefix=/usr && make simano
+  クライアントで client ディレクトリで、
+    ./autogen.sh && make
   できた simano をどこかにコピーしてください。
+  日本語が欲しい人は、代わりに
+    ./autogen.sh --localedir=<どこか> && make
+  として、po/ja.gmo を <どこか>/ja/LC_MESSAGES/simano.mo へコピーし、
+  simano を好きな場所へコピーしてください。
 
 
 実行方法

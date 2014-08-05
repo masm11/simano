@@ -1,9 +1,11 @@
 GNOME
-  - configure.ac の package 名は何も見ればいい?
-  - icon-name は何を使えばいい?
+  o configure.ac の package 名は何を見ればいい?
+  o icon-name は何を使えばいい?
 
 client
-  - po 対応
+  o po 対応
+  - struct sockaddr_in6 を最大として扱っていた箇所、
+    sockaddr_strage に変更。
 
 server
   - automake 対応

@@ -1,0 +1,68 @@
+# simano - Simple Mail Notification
+# Copyright (C) 2014 Yuuki Harano
+# This file is distributed under the same license as the simano package.
+# Yuuki Harano <masm@masm11.ddo.jp>, 2014.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: simano 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-08-04 23:45+0900\n"
+"PO-Revision-Date: 2014-08-04 23:33+0900\n"
+"Last-Translator: Yuuki Harano <masm@masm11.ddo.jp>\n"
+"Language-Team: ja <masm@masm11.ddo.jp>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../simano.c:79
+msgid "Simple Mail Notifier"
+msgstr "メール通知"
+
+#: ../simano.c:81
+msgid "Retry"
+msgstr "リトライ"
+
+#: ../simano.c:115
+msgid "Connection broken."
+msgstr "接続が切れました。"
+
+#: ../simano.c:221
+msgid "Connection failed."
+msgstr "接続に失敗しました。"
+
+#: ../simano.c:230
+msgid "server hostname"
+msgstr "サーバのホスト名"
+
+#: ../simano.c:231
+msgid "server port"
+msgstr "サーバのポート番号"
+
+#: ../simano.c:232
+msgid "icon-name for new mail"
+msgstr "メールがある時のアイコン名"
+
+#: ../simano.c:233
+msgid "icon-name for no mail"
+msgstr "メールがない時のアイコン名"
+
+#: ../simano.c:251
+#, c-format
+msgid "Invalid option.\n"
+msgstr "オプションが違います。\n"
+
+#: ../simano.c:259
+#, c-format
+msgid "Notification init error.\n"
+msgstr "通知の初期化でエラーです。\n"
+
+#: ../simano.c:267
+msgid "Mail"
+msgstr "メール"
+
+#: ../simano.c:267
+msgid "You have new mails."
+msgstr "新着メールがあります。"
