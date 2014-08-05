@@ -12,3 +12,8 @@ client/config.status
 client/configure
 client/simano-simano.o
 client/stamp-h1
+client/po/Makefile
+client/po/Makefile.in
+client/po/POTFILES
+client/po/ja.gmo
+client/po/stamp-it
