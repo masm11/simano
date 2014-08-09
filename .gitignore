@@ -17,3 +17,14 @@ client/po/Makefile.in
 client/po/POTFILES
 client/po/ja.gmo
 client/po/stamp-it
+server/.deps/
+server/Makefile
+server/Makefile.in
+server/aclocal.m4
+server/autom4te.cache/
+server/config.h
+server/config.log
+server/config.status
+server/configure
+server/simanod.o
+server/stamp-h1
