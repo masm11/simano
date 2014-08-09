@@ -4,10 +4,10 @@ GNOME
 
 client
   o po 対応
-  - struct sockaddr_in6 を最大として扱っていた箇所、
+  o struct sockaddr_in6 を最大として扱っていた箇所、
     sockaddr_strage に変更。
 
 server
-  - automake 対応
+  o automake 対応
   - そのうち FreeBSD 対応できるといいな。
   - mbox とか。
