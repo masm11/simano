@@ -31,7 +31,7 @@ Simple Mail Notification
 コンパイル・インストール方法
 
   メールサーバで server ディレクトリで、
-    make
+    ./autogen.sh && make
   できた simanod をどこかにコピーしてください。
 
   クライアントで client ディレクトリで、
