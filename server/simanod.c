@@ -116,7 +116,7 @@ static void service(int sock)
 	}
 	
 	if (fds[1].revents & POLLIN) {
-	    char buf[1024];
+	    char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
 	    
 	    switch (read(in, buf, sizeof buf)) {
 	    case -1:
