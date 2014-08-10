@@ -7,6 +7,7 @@ client/Makefile.in
 client/aclocal.m4
 client/autom4te.cache/
 client/config.h
+client/config.h.in
 client/config.log
 client/config.status
 client/configure
@@ -23,6 +24,7 @@ server/Makefile.in
 server/aclocal.m4
 server/autom4te.cache/
 server/config.h
+server/config.h.in
 server/config.log
 server/config.status
 server/configure
