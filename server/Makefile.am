@@ -1,3 +1,9 @@
 bin_PROGRAMS = simanod
 
-simanod_SOURCES = simanod.c watch-inotify.c
+if USE_INOTIFY
+WATCH = watch-inotify.c
+else
+WATCH = watch-poll.c
+endif
+
+simanod_SOURCES = simanod.c $(WATCH)
