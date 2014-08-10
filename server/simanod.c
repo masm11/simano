@@ -27,6 +27,7 @@
 #include <dirent.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <sys/inotify.h>
 
 #define MAILDIR "Maildir"
@@ -161,25 +162,62 @@ int main(int argc, char **argv)
     }
     int port = atoi(argv[2]);
     
-    int sock = socket(AF_INET6, SOCK_STREAM, 0);
-    if (sock == -1) {
-	perror("socket");
+    /**/
+    
+    int *socks = malloc(1);
+    int nsocks = 0;
+    
+    struct addrinfo hints;
+    struct addrinfo *res;
+    
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    int err = getaddrinfo(NULL, argv[2], &hints, &res);
+    if (err != 0) {
+	fprintf(stderr, "getaddrinfo(): %s\n", gai_strerror(err));
 	exit(1);
     }
     
-    struct sockaddr_in6 sa;
-    memset(&sa, 0, sizeof sa);
-    sa.sin6_family = AF_INET6;
-    sa.sin6_port = htons(port);
-    if (bind(sock, (struct sockaddr *) &sa, sizeof sa) == -1) {
-	perror("bind");
+    for (struct addrinfo *ai = res; ai != NULL; ai = ai->ai_next) {
+	int sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+	if (sock == -1) {
+	    perror("socket");
+	    continue;
+	}
+	
+	if (ai->ai_family == AF_INET6) {
+	    int opt = 1;
+	    if (setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, &opt, sizeof opt) == -1)
+		perror("setsockopt");
+	}
+	
+	if (bind(sock, ai->ai_addr, ai->ai_addrlen) == -1) {
+	    perror("bind");
+	    close(sock);
+	    continue;
+	}
+	
+	if (listen(sock, 5) == -1) {
+	    perror("listen");
+	    close(sock);
+	    continue;
+	}
+	
+	socks = realloc(socks, (nsocks + 1) * sizeof *socks);
+	if (socks == NULL) {
+	    fprintf(stderr, "realloc: out of memory.\n");
+	    exit(1);
+	}
+	socks[nsocks++] = sock;
+    }
+    if (nsocks == 0) {
+	fprintf(stderr, "No socket available.\n");
 	exit(1);
     }
     
-    if (listen(sock, 5) == -1) {
-	perror("listen");
-	exit(1);
-    }
+    /**/
     
     struct sigaction act;
     
@@ -195,29 +233,48 @@ int main(int argc, char **argv)
     daemon(0, 0);
     
     while (1) {
-	struct sockaddr_storage ss;
-	socklen_t sslen = sizeof ss;
-	int s = accept(sock, (struct sockaddr *) &ss, &sslen);
-	if (s == -1) {
-	    if (errno != EINTR) {
-		perror("accept");
-		exit(1);
-	    }
-	    
-	    continue;
+	struct pollfd fds[nsocks];
+	
+	for (int i = 0; i < nsocks; i++) {
+	    fds[i].fd = socks[i];
+	    fds[i].events = POLLIN;
+	    fds[i].revents = 0;
 	}
 	
-	switch (fork()) {
-	case -1:
-	    perror("fork");
-	    break;
-	case 0:
-	    close(sock);
-	    service(s);
-	    break;
-	default:
-	    close(s);
-	    break;
+	if (poll(fds, nsocks, -1) == -1) {
+	    if (errno == EINTR)
+		continue;
+	    perror("poll");
+	    exit(1);
+	}
+	
+	for (int i = 0; i < nsocks; i++) {
+	    if (fds[i].revents & POLLIN) {
+		int s = accept(socks[i], NULL, NULL);
+		if (s == -1) {
+		    if (errno != EINTR) {
+			perror("accept");
+			exit(1);
+		    }
+		    
+		    continue;
+		}
+		
+		switch (fork()) {
+		case -1:
+		    perror("fork");
+		    close(s);
+		    break;
+		case 0:
+		    for (int i = 0; i < nsocks; i++)
+			close(socks[i]);
+		    service(s);
+		    break;
+		default:
+		    close(s);
+		    break;
+		}
+	    }
 	}
     }
     
