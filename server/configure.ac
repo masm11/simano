@@ -8,7 +8,10 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CC_C99
+if test "x$ac_cv_prog_cc_c99" = "xno"; then
+    AC_MSG_ERROR(You need C99 compiler.)
+fi
 
 # Checks for libraries.
 AC_SEARCH_LIBS(inotify_init, inotify,,
