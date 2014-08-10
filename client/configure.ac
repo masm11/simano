@@ -19,7 +19,7 @@ AC_CHECK_HEADERS([netdb.h stdlib.h string.h sys/socket.h])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CHECK_FUNCS([memset socket strerror])
+AC_CHECK_FUNCS([memset socket strerror getaddrinfo])
 
 AM_GLIB_GNU_GETTEXT
 IT_PROG_INTLTOOL
