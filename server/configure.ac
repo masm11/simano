@@ -24,7 +24,7 @@ AC_CHECK_HEADERS([netinet/in.h stdlib.h string.h sys/socket.h unistd.h])
 
 # Checks for library functions.
 AC_FUNC_FORK
-AC_CHECK_FUNCS([memset socket strchr strstr])
+AC_CHECK_FUNCS([memset socket strchr strstr getaddrinfo])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
