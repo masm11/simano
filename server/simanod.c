@@ -29,6 +29,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <sys/inotify.h>
+#include <pthread.h>
 
 #define MAILDIR "Maildir"
 
@@ -68,8 +69,38 @@ static void send_status(int sock, int has_newmail)
     write(sock, data, 1);
 }
 
+static void *recv_keepalive(void *parm)
+{
+    int sock = *(int *) parm;
+    
+    while (1) {
+	char buf[32];
+	switch (read(sock, buf, sizeof buf)) {
+	case 0:
+	    exit(1);
+	case -1:
+	    if (errno != EINTR) {
+		perror("read");
+		exit(1);
+	    }
+	    break;
+	}
+    }
+    
+    return NULL;
+}
+
 static void service(int sock)
 {
+    pthread_t thr;
+    pthread_attr_t attr;
+    memset(&attr, 0, sizeof attr);
+    int err = pthread_create(&thr, &attr, recv_keepalive, &sock);
+    if (err != 0) {
+	fprintf(stderr, "pthread_create: %s\n", strerror(err));
+	exit(1);
+    }
+    
     char path[1024];
     
     snprintf(path, sizeof path, "%s/%s", getenv("HOME"), MAILDIR);
@@ -99,23 +130,20 @@ static void service(int sock)
     send_status(sock, has_newmail);
     
     while (1) {
-	struct pollfd fds[2];
+	struct pollfd fds[1];
 	
-	fds[0].fd = sock;
+	fds[0].fd = in;
 	fds[0].events = POLLIN;
 	fds[0].revents = 0;
-	fds[1].fd = in;
-	fds[1].events = POLLIN;
-	fds[1].revents = 0;
 	
-	if (poll(fds, 2, -1) == -1) {
+	if (poll(fds, 1, -1) == -1) {
 	    if (errno == EINTR)
 		continue;
 	    perror("poll");
 	    exit(1);
 	}
 	
-	if (fds[1].revents & POLLIN) {
+	if (fds[0].revents & POLLIN) {
 	    char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
 	    
 	    switch (read(in, buf, sizeof buf)) {
@@ -135,20 +163,6 @@ static void service(int sock)
 		    has_newmail = new_hasnewmail;
 		    send_status(sock, has_newmail);
 		}
-	    }
-	}
-	
-	if (fds[0].revents & POLLIN) {
-	    char buf[1024];
-	    switch (read(sock, buf, sizeof buf)) {
-	    case 0:
-		exit(1);
-	    case -1:
-		if (errno != EINTR) {
-		    perror("read");
-		    exit(1);
-		}
-		break;
 	    }
 	}
     }

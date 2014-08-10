@@ -16,6 +16,8 @@ fi
 # Checks for libraries.
 AC_SEARCH_LIBS(inotify_init, inotify,,
                [AC_MSG_ERROR(inotify required.)])
+AC_SEARCH_LIBS(pthread_create, pthread,,
+               [AC_MSG_ERROR(pthread required.)])
 
 # Checks for header files.
 AC_CHECK_HEADERS([netinet/in.h stdlib.h string.h sys/socket.h unistd.h])
