@@ -1,3 +1,3 @@
 bin_PROGRAMS = simanod
 
-simanod_SOURCES = simanod.c
+simanod_SOURCES = simanod.c watch-inotify.c

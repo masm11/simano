@@ -28,5 +28,5 @@ server/config.h.in
 server/config.log
 server/config.status
 server/configure
-server/simanod.o
+server/*.o
 server/stamp-h1
