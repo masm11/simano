@@ -114,9 +114,10 @@ static void update(void)
 	connect_to_server();
 	break;
     default:
-	if (buf[0] == '0')
+	if (buf[0] == '0') {
 	    gtk_status_icon_set_from_icon_name(icon, nomail);
-	else {
+	    notify_notification_close(notification, NULL);
+	} else {
 	    gtk_status_icon_set_from_icon_name(icon, newmail);
 	    notify_notification_show(notification, NULL);
 	}
