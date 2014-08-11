@@ -73,13 +73,35 @@ static void service(int sock)
     watch(sock);
 }
 
+static void usage(void)
+{
+    fprintf(stderr, "usage: simanod [-d] -p <port>\n");
+    fprintf(stderr, "  -d         debug mode\n");
+    fprintf(stderr, "  -p <port>  port number\n");
+    exit(1);
+}
+
 int main(int argc, char **argv)
 {
-    if (argc != 3) {
-	fprintf(stderr, "usage: simanod -p <port>\n");
-	exit(1);
+    const char *port = NULL;
+    int opt;
+    int debug = 0;
+    
+    while ((opt = getopt(argc, argv, "p:d")) != -1) {
+	switch (opt) {
+	case 'p':
+	    port = optarg;
+	    break;
+	case 'd':
+	    debug = 1;
+	    break;
+	default:
+	    usage();
+	}
     }
-    int port = atoi(argv[2]);
+    
+    if (port == NULL)
+	usage();
     
     /**/
     
@@ -93,7 +115,7 @@ int main(int argc, char **argv)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
-    int err = getaddrinfo(NULL, argv[2], &hints, &res);
+    int err = getaddrinfo(NULL, port, &hints, &res);
     if (err != 0) {
 	fprintf(stderr, "getaddrinfo(): %s\n", gai_strerror(err));
 	exit(1);
@@ -149,7 +171,8 @@ int main(int argc, char **argv)
     act.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &act, NULL);
     
-    daemon(0, 0);
+    if (!debug)
+	daemon(0, 0);
     
     while (1) {
 	struct pollfd fds[nsocks];
