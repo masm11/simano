@@ -89,39 +89,24 @@ void watch(int sock)
     send_status(sock, has_newmail);
     
     while (1) {
-	struct pollfd fds[1];
+	char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
 	
-	fds[0].fd = in;
-	fds[0].events = POLLIN;
-	fds[0].revents = 0;
-	
-	if (poll(fds, 1, -1) == -1) {
-	    if (errno == EINTR)
-		continue;
-	    perror("poll");
-	    exit(1);
-	}
-	
-	if (fds[0].revents & POLLIN) {
-	    char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
+	switch (read(in, buf, sizeof buf)) {
+	case -1:
+	    if (errno != EINTR) {
+		perror("read");
+		exit(1);
+	    }
+	    break;
 	    
-	    switch (read(in, buf, sizeof buf)) {
-	    case -1:
-		if (errno != EINTR) {
-		    perror("read");
-		    exit(1);
-		}
-		break;
-		
-	    case 0:
-		exit(0);
-		
-	    default:;
-		int new_hasnewmail = check(newdir, 1) || check(curdir, 0);
-		if (new_hasnewmail != has_newmail) {
-		    has_newmail = new_hasnewmail;
-		    send_status(sock, has_newmail);
-		}
+	case 0:
+	    exit(0);
+	    
+	default:;
+	    int new_hasnewmail = check(newdir, 1) || check(curdir, 0);
+	    if (new_hasnewmail != has_newmail) {
+		has_newmail = new_hasnewmail;
+		send_status(sock, has_newmail);
 	    }
 	}
     }
