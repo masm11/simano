@@ -13,6 +13,13 @@ AM_PROG_CC_C_O
 
 # Checks for libraries.
 
+case "$host_os" in
+solaris*)
+  # for getaddrinfo().
+  LIBS="$LIBS -lsocket -lnsl"
+  ;;
+esac
+
 # Checks for header files.
 AC_CHECK_HEADERS([netdb.h stdlib.h string.h sys/socket.h])
 

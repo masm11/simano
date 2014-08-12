@@ -30,6 +30,13 @@ AM_CONDITIONAL([USE_INOTIFY], [test x$use_inotify = xyes])
 
 # Checks for libraries.
 
+case "$host_os" in
+solaris*)
+  # for getaddrinfo().
+  LIBS="$LIBS -lsocket -lnsl"
+  ;;
+esac
+
 # AC_SEARCH_LIBS(inotify_init, inotify,,
 #                [AC_MSG_ERROR(inotify required.)])
 AC_SEARCH_LIBS(pthread_create, pthread,,
