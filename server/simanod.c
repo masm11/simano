@@ -63,7 +63,7 @@ static void service(int sock)
 {
     pthread_t thr;
     pthread_attr_t attr;
-    memset(&attr, 0, sizeof attr);
+    pthread_attr_init(&attr);
     int err = pthread_create(&thr, &attr, recv_keepalive, &sock);
     if (err != 0) {
 	fprintf(stderr, "pthread_create: %s\n", strerror(err));
