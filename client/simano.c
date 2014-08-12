@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include <locale.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -263,7 +264,17 @@ int main(int argc, char **argv)
     gtk_status_icon_set_tooltip_text(icon,
 	    g_strdup_printf("%s:%d", server, port));
     
+#ifdef NOTIFY_CHECK_VERSION
+#if NOTIFY_CHECK_VERSION(0, 7, 0)
+#define NEW_ARG_3
+#endif
+#endif
+#ifdef NEW_ARG_3
     notification = notify_notification_new(_("Mail"), _("You have new mails."), newmail);
+#else
+    notification = notify_notification_new(_("Mail"), _("You have new mails."), newmail, NULL);
+#endif
+#undef NEW_ARG_3
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     

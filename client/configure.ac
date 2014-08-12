@@ -7,6 +7,8 @@ AC_CONFIG_SRCDIR([simano.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 
+AC_CANONICAL_HOST
+
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
