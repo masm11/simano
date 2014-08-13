@@ -40,7 +40,7 @@ Simple Mail Notification
 
   Ubuntu GNOME 14.04.1 desktop amd64
     server は未確認。
-    client はコンパイルが通らない。
+    client はコンパイルが通らない。アイコンが表示されない。
 
   Debian 7.6.0 amd64
     GNOME で問題なく動作。
