@@ -15,20 +15,14 @@ if test "x$ac_cv_prog_cc_c99" = "xno"; then
     AC_MSG_ERROR(You need C99 compiler.)
 fi
 
+use_inotify=no
+use_port=no
 case "$host_os" in
 linux-gnu)
-  AC_CHECK_FUNC(inotify_init,
-                [use_inotify=yes],
-                [use_inotify=no])
+  AC_CHECK_FUNC(inotify_init, [use_inotify=yes])
   ;;
 solaris*)
-  AC_CHECK_FUNC(port_create,
-                [use_port=yes],
-                [use_port=no])
-  ;;
-*)
-  use_inotify=no
-  use_port=no
+  AC_CHECK_FUNC(port_create, [use_port=yes])
   ;;
 esac
 
