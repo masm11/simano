@@ -21,12 +21,19 @@ linux-gnu)
                 [use_inotify=yes],
                 [use_inotify=no])
   ;;
+solaris*)
+  AC_CHECK_FUNC(port_create,
+                [use_port=yes],
+                [use_port=no])
+  ;;
 *)
   use_inotify=no
+  use_port=no
   ;;
 esac
 
 AM_CONDITIONAL([USE_INOTIFY], [test x$use_inotify = xyes])
+AM_CONDITIONAL([USE_PORT], [test x$use_port = xyes])
 
 # Checks for libraries.
 
