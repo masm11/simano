@@ -11,8 +11,6 @@ Simple Mail Notification
 
 先に注意
 
-  xfce4 のみ対応です。GNOME でも動くかもしれませんが、未確認です。
-
   メールサーバで daemon を実行するため、メールサーバにアカウントが必要
   です。
 
@@ -26,8 +24,26 @@ Simple Mail Notification
   通知エリアにアイコンが表示され、バルーンに新着メールがある旨表示され
   るのみで、何通届いたか、誰から届いたか、などは表示されません。
 
-  solaris では通知領域に何も表示されません。どこに問題があるのか解りま
-  せん。
+
+動作環境
+
+  slackware64 14.1
+    xfce4 で問題なく動作。
+
+  FreeBSD 10.0-RELEASE i386
+    server は問題なく動作。
+    client は未確認。
+
+  Solaris 11.2 x86
+    server は問題なく動作。
+    client は GNOME 通知領域にアイコンが表示されない。
+
+  Ubuntu GNOME 14.04.1 desktop amd64
+    server は未確認。
+    client はコンパイルが通らない。
+
+  Debian 7.6.0 amd64
+    GNOME で問題なく動作。
 
 
 コンパイル・インストール方法
