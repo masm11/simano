@@ -82,7 +82,7 @@ static void popup(const char *fmt, ...)
     gtk_widget_show(dialog);
     
     GtkWidget *label = gtk_label_new(msg);
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), label, FALSE, FALSE, 0);
     gtk_widget_show(label);
     
     gtk_dialog_run(GTK_DIALOG(dialog));
