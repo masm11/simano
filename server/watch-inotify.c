@@ -22,41 +22,11 @@
 #include <unistd.h>
 #include <sys/inotify.h>
 #include <poll.h>
-#include <dirent.h>
+#include <limits.h>	// NAME_MAX
 #include <errno.h>
 #include "simanod.h"
+#include "check.h"
 #include "watch.h"
-
-#define MAILDIR "Maildir"
-
-static int check(const char *path, int isnew)
-{
-    DIR *dir;
-    
-    if ((dir = opendir(path)) == NULL) {
-	perror(path);
-	return 0;
-    }
-    
-    struct dirent *ep;
-    int found = 0;
-    while ((ep = readdir(dir)) != NULL) {
-	if (isnew) {
-	    if (strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0)
-		found = 1;
-	} else {
-	    char *p = strstr(ep->d_name, ":2,");
-	    if (p != NULL) {
-		if (strchr(p, 'S') == NULL)
-		    found = 1;
-	    }
-	}
-    }
-    
-    closedir(dir);
-    
-    return found;
-}
 
 void watch(int sock)
 {

@@ -17,38 +17,36 @@
  */
 #include "config.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <poll.h>
-#include <errno.h>
-#include "simanod.h"
+#include <dirent.h>
 #include "check.h"
-#include "watch.h"
 
-void watch(int sock)
+int check(const char *path, int isnew)
 {
-    char path[1024];
+    DIR *dir;
     
-    snprintf(path, sizeof path, "%s/%s", getenv("HOME"), MAILDIR);
+    if ((dir = opendir(path)) == NULL) {
+	perror(path);
+	return 0;
+    }
     
-    char newdir[1024];
-    snprintf(newdir, sizeof newdir, "%s/new", path);
-    
-    char curdir[1024];
-    snprintf(curdir, sizeof curdir, "%s/cur", path);
-    
-    int has_newmail = check(newdir, 1) || check(curdir, 0);
-    
-    send_status(sock, has_newmail);
-    
-    while (1) {
-	sleep(60);
-	
-	int new_hasnewmail = check(newdir, 1) || check(curdir, 0);
-	if (new_hasnewmail != has_newmail) {
-	    has_newmail = new_hasnewmail;
-	    send_status(sock, has_newmail);
+    struct dirent *ep;
+    int found = 0;
+    while ((ep = readdir(dir)) != NULL) {
+	if (isnew) {
+	    if (strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0)
+		found = 1;
+	} else {
+	    char *p = strstr(ep->d_name, ":2,");
+	    if (p != NULL) {
+		if (strchr(p, 'S') == NULL)
+		    found = 1;
+	    }
 	}
     }
+    
+    closedir(dir);
+    
+    return found;
 }
+

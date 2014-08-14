@@ -10,4 +10,4 @@ WATCH = watch-poll.c
 endif
 endif
 
-simanod_SOURCES = simanod.c simanod.h $(WATCH) watch.h
+simanod_SOURCES = simanod.c simanod.h $(WATCH) watch.h check.c check.h
