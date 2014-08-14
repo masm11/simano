@@ -9,5 +9,5 @@ client
 
 server
   o automake 対応
-  - そのうち FreeBSD 対応できるといいな。
-  - mbox とか。
+  o そのうち FreeBSD 対応できるといいな。
+  x mbox とか。
