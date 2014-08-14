@@ -162,10 +162,16 @@ int main(int argc, char **argv)
     
     struct sigaction act;
     
+#ifdef SA_NOCLDWAIT
     memset(&act, 0, sizeof act);
     act.sa_handler = SIG_DFL;
     act.sa_flags = SA_NOCLDWAIT;
     sigaction(SIGCHLD, &act, NULL);
+#else
+    memset(&act, 0, sizeof act);
+    act.sa_handler = SIG_IGN;
+    sigaction(SIGCHLD, &act, NULL);
+#endif
     
     memset(&act, 0, sizeof act);
     act.sa_handler = SIG_IGN;

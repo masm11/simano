@@ -45,6 +45,10 @@ Simple Mail Notification
   Debian 7.6.0 amd64
     GNOME で問題なく動作。
 
+  Windows 8.1 Update x64 cygwin
+    server は問題なく動作。
+    client は通知領域にアイコンが表示されない。
+
 
 コンパイル・インストール方法
 
