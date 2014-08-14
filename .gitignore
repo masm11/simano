@@ -30,3 +30,10 @@ server/config.status
 server/configure
 server/*.o
 server/stamp-h1
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.log
+config.status
+configure
