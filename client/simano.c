@@ -29,7 +29,9 @@
 #include <netdb.h>
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#ifdef HAVE_NOTIFY
 #include <libnotify/notify.h>
+#endif
 
 static gchar *server = NULL;
 static gint port = 0;
@@ -56,7 +58,9 @@ static GIOChannel *channel = NULL;
 static guint watch = 0;
 
 static GtkStatusIcon *icon;
+#ifdef HAVE_NOTIFY
 static NotifyNotification *notification;
+#endif
 
 static void disconnect_from_server(void);
 static void connect_to_server(void);
@@ -117,10 +121,14 @@ static void update(void)
     default:
 	if (buf[0] == '0') {
 	    gtk_status_icon_set_from_icon_name(icon, nomail);
+#ifdef HAVE_NOTIFY
 	    notify_notification_close(notification, NULL);
+#endif
 	} else {
 	    gtk_status_icon_set_from_icon_name(icon, newmail);
+#ifdef HAVE_NOTIFY
 	    notify_notification_show(notification, NULL);
+#endif
 	}
 	break;
     }
@@ -255,15 +263,18 @@ int main(int argc, char **argv)
     if (server == NULL || port == 0)
 	usage();
     
+#ifdef HAVE_NOTIFY
     if (!notify_init("simano")) {
 	g_print(_("Notification init error.\n"));
 	usage();
     }
+#endif
     
     icon = gtk_status_icon_new_from_icon_name(nomail);
     gtk_status_icon_set_tooltip_text(icon,
 	    g_strdup_printf("%s:%d", server, port));
     
+#ifdef HAVE_NOTIFY
 #ifdef NOTIFY_CHECK_VERSION
 #if NOTIFY_CHECK_VERSION(0, 7, 0)
 #define NEW_ARG_3
@@ -275,6 +286,7 @@ int main(int argc, char **argv)
     notification = notify_notification_new(_("Mail"), _("You have new mails."), newmail, NULL);
 #endif
 #undef NEW_ARG_3
+#endif
     
     g_timeout_add(60 * 1000, timeout_cb, NULL);
     
