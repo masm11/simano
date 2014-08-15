@@ -1,13 +1,2 @@
-GNOME
-  o configure.ac の package 名は何を見ればいい?
-  o icon-name は何を使えばいい?
-
-client
-  o po 対応
-  o struct sockaddr_in6 を最大として扱っていた箇所、
-    sockaddr_strage に変更。
-
-server
-  o automake 対応
-  o そのうち FreeBSD 対応できるといいな。
-  x mbox とか。
+- getaddrinfo() が、時間かかった末、失敗する場合がある。
+- しばらく suspend した後、さっさとエラー出して欲しい。
