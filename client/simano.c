@@ -62,6 +62,8 @@ static GtkStatusIcon *icon;
 static NotifyNotification *notification;
 #endif
 
+static time_t last_write_time = 0;
+
 static void disconnect_from_server(void);
 static void connect_to_server(void);
 
@@ -150,6 +152,16 @@ static gboolean watch_cb(GIOChannel *source, GIOCondition condition, gpointer da
  */
 static gboolean timeout_cb(gpointer user_data)
 {
+    /* suspend/resume 時に、接続が切れてるなら、さっさと教えて欲しいので、
+     * 短めに timeout_cb を呼んでもらい、ここで経過時間をチェックする。
+     * 短めに呼ばれた時には 60秒に一度 write し、
+     * しばらく呼ばれてなかった時にはすぐに write する。
+     */
+    time_t now = time(NULL);
+    if (now < last_write_time + 60)
+	return TRUE;
+    last_write_time = now;
+    
     if (sock >= 0) {
 	if (write(sock, "0", 1) == -1) {
 	    if (errno != EINTR) {
@@ -288,7 +300,7 @@ int main(int argc, char **argv)
 #undef NEW_ARG_3
 #endif
     
-    g_timeout_add(60 * 1000, timeout_cb, NULL);
+    g_timeout_add(5 * 1000, timeout_cb, NULL);
     
     connect_to_server();
     
