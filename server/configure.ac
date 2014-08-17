@@ -17,6 +17,7 @@ fi
 
 use_inotify=no
 use_port=no
+use_win=no
 case "$host_os" in
 linux-gnu)
   AC_CHECK_FUNC(inotify_init, [use_inotify=yes])
@@ -24,10 +25,14 @@ linux-gnu)
 solaris*)
   AC_CHECK_FUNC(port_create, [use_port=yes])
   ;;
+cygwin)
+  use_win=yes
+  ;;
 esac
 
 AM_CONDITIONAL([USE_INOTIFY], [test x$use_inotify = xyes])
 AM_CONDITIONAL([USE_PORT], [test x$use_port = xyes])
+AM_CONDITIONAL([USE_WIN], [test x$use_win = xyes])
 
 # Checks for libraries.
 
