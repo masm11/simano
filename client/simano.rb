@@ -44,7 +44,7 @@ def update
   
   if !buf || buf == ''
     disconnect_from_server
-    popup('read: %s', 'Connection broken.')
+    popup('read: %s', '接続が切れました。')
     connect_to_server
     return
   end
@@ -58,9 +58,9 @@ def update
     else
       @icon.icon_name = @newmail
       unless @notify
-        @notify = Libnotify.new(:summary => 'Mail',
+        @notify = Libnotify.new(:summary => 'メール通知',
                                 :icon_path => @newmail,
-                                :body => 'You have new mails.')
+                                :body => '新着メールがあります。')
       end
       @notify.show!
     end
@@ -101,10 +101,10 @@ end
 
 opt = OptionParser.new
 
-opt.on('-s VAL', '--server=VAL',  'server hostname (mandatory)') {|v| @hostname = v }
-opt.on('-p VAL', '--port=VAL',    'server port (mandatory)') { |v| @port = v.to_i }
-opt.on('-N VAL', '--newmail=VAL', 'icon-name for new mail') { |v| @newmail = v }
-opt.on('-n VAL', '--nomail=VAL',  'icon-name for no mail') { |v| @nomail = v }
+opt.on('-s VAL', '--server=VAL',  'サーバのホスト名 (必須)') {|v| @hostname = v }
+opt.on('-p VAL', '--port=VAL',    'サーバのポート番号 (必須)') { |v| @port = v.to_i }
+opt.on('-N VAL', '--newmail=VAL', 'メールがある時のアイコン名') { |v| @newmail = v }
+opt.on('-n VAL', '--nomail=VAL',  'メールがない時のアイコン名') { |v| @nomail = v }
 
 opt.parse!(ARGV)
 
