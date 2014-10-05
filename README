@@ -27,6 +27,8 @@ Simple Mail Notification
 
 動作環境
 
+  ruby 化に伴い、以下はあてになりません。
+
   slackware64 14.1
     xfce4 で問題なく動作。
 
