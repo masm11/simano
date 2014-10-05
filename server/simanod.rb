@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
+require 'optparse'
 require 'socket'
 require 'rb-inotify'
 
@@ -63,31 +64,31 @@ end
 
 ####
 
-port = 0
-
-if ARGV[0] == '-p'
-  port = ARGV[1].to_i
-end
-
-if port == 0
-  $stderr.print "-p is mandatory.\n"
+def usage
+  $stderr.print "usage: simanod.rb [-d] -p <port>\n";
   exit 1
 end
 
-# fixme: daemon 化
+port = nil
+debug = nil
 
-# fixme: ipv6 対応
-sock = TCPServer.open("<any>", port)
+opt = OptionParser.new
 
-while true
-  begin
-    s = sock.accept
-  rescue Errno::EINTR
-    retry
-  end
-  
+opt.on('-d',     '--[no-]debug', 'デバッグモードにする。') { |v| debug = v }
+opt.on('-p VAL', '--port=VAL',   'ポート番号を指定する。') { |v| port = v.to_i }
+
+opt.parse!(ARGV)
+
+if !port
+  usage
+end
+
+unless debug
+  Process.daemon(false, false)
+end
+
+Socket.tcp_server_loop(port) do |s, ai|
   fork do
-    sock.close
     service(s);
     exit 0
   end
