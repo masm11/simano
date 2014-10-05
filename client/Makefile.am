@@ -1,1 +1,1 @@
-dist_bin_SCRIPTS = simanod.rb
+dist_bin_SCRIPTS = simano.rb
