@@ -52,9 +52,9 @@ Simple Mail Notification
 
 コンパイル・インストール方法
 
-  メールサーバで server ディレクトリで、
-    ./configure && make
-  できた simanod をどこかにコピーしてください。
+  メールサーバで
+    gem install rb-inotify
+  した後、simanod.rb をどこかにコピーしてください。
 
   クライアントで
     gem install gtk3
@@ -68,7 +68,7 @@ Simple Mail Notification
   そのポートに穴を開けてください。
 
   メールサーバで
-    simanod -p <ポート番号>
+    simanod.rb -p <ポート番号>
   と実行してください。
 
   そしてクライアントで
