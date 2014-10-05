@@ -74,6 +74,8 @@ if port == 0
   exit 1
 end
 
+# fixme: daemon 化
+
 # fixme: ipv6 対応
 sock = TCPServer.open("<any>", port)
 
