@@ -18,8 +18,11 @@ require 'libnotify'
 def popup(fmt, *args)
   msg = sprintf fmt, *args
   
-  dialog = Gtk::MessageDialog.new(nil, Gtk::Dialog::MODAL, Gtk::MessageType::INFO,
-                                  Gtk::MessageDialog::BUTTONS_CLOSE, msg)
+  dialog = Gtk::MessageDialog.new(:parent => nil,
+                                  :flags => :modal,
+                                  :type => :info,
+                                  :buttons_type => :ok,
+                                  :message => msg)
   dialog.show
   dialog.run
   dialog.destroy
