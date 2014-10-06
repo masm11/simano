@@ -11,6 +11,9 @@ Simple Mail Notification
 
 先に注意
 
+  ruby を使っていますが、rb-inotify を使っているため、サーバは Linux 専
+  用です、きっと。
+
   メールサーバで daemon を実行するため、メールサーバにアカウントが必要
   です。
 
@@ -27,29 +30,8 @@ Simple Mail Notification
 
 動作環境
 
-  ruby 化に伴い、以下はあてになりません。
-
-  slackware64 14.1
+  slackware64 14.1 + ruby 2.1.3p242
     xfce4 で問題なく動作。
-
-  FreeBSD 10.0-RELEASE i386
-    server は問題なく動作。
-    client は未確認。
-
-  Solaris 11.2 x86
-    server は問題なく動作。
-    client は GNOME 通知領域にアイコンが表示されない。
-
-  Ubuntu GNOME 14.04.1 desktop amd64
-    server は未確認。
-    client はコンパイルが通らない。アイコンが表示されない。
-
-  Debian 7.6.0 amd64
-    GNOME で問題なく動作。
-
-  Windows 8.1 Update x64 cygwin
-    server は問題なく動作。
-    client は通知領域にアイコンが表示されない。
 
 
 コンパイル・インストール方法
@@ -77,9 +59,7 @@ Simple Mail Notification
     simano.rb -s <メールサーバのホスト名> -p <ポート番号> &
   と実行してください。
 
-  メールが来たら、通知エリアに反映され、バルーンが表示されます。server
-  が linux, solaris, cygwin の場合はすぐに反映されると思いますが、その
-  他の場合は1分程度の遅延が生じます。
+  メールが来たら、すぐに通知エリアに反映され、バルーンが表示されます。
 
   アイコンが気に入らなければ、-N <newmail> と -n <nomail> で変更できま
   す。
