@@ -79,7 +79,7 @@ def connect_to_server
   disconnect_from_server
   
   begin
-    @sock = TCPSocket.open(@hostname, @port)
+    @sock = TCPSocket.new(@hostname, @port)
   rescue => e
     popup("open: %s", e.message)
     retry
