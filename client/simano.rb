@@ -89,6 +89,7 @@ def connect_to_server
   
   @channel.add_watch(GLib::IOChannel::IN) do | channel, condition |
     update
+    true
   end
 end
 
