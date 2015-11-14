@@ -5,6 +5,7 @@ require 'optparse'
 require 'socket'
 require 'gtk3'
 require 'libnotify'
+require 'resolv-replace'
 
 @hostname = nil
 @port = nil
@@ -17,6 +18,10 @@ require 'libnotify'
 
 def popup(fmt, *args)
   msg = sprintf fmt, *args
+  caller.each do |s|
+    msg += "\n"
+    msg += s
+  end
   
   dialog = Gtk::MessageDialog.new(:parent => nil,
                                   :flags => :modal,
@@ -69,17 +74,50 @@ end
 
 def disconnect_from_server
   if @channel
+    GLib::Source.remove @watch_id
     @channel.close
     @channel = nil
     @sock = nil
   end
 end
 
+def connect(host, port)
+  dns = Resolv::DNS.open
+  addrs = dns.getaddresses host
+  dns.close
+  raise "Unknown host: #{host}" if addrs.size == 0
+  
+  # IPv6 を先に。あとは文字列順。
+  addrs.sort! do |a, b|
+    astr = a.to_s
+    bstr = b.to_s
+    ret = 0
+    if /\./ =~ astr && /:/ =~ bstr
+      ret = 1
+    elsif /:/ =~ astr && /\./ =~ bstr
+      ret = -1
+    else
+      ret = astr <=> bstr
+    end
+    ret
+  end
+  
+  ex = nil
+  addrs.each do |addr|
+    begin
+      return TCPSocket.open addr.to_s, port
+    rescue => e
+      ex = e
+    end
+  end
+  raise ex
+end
+
 def connect_to_server
   disconnect_from_server
   
   begin
-    @sock = TCPSocket.new(@hostname, @port)
+    @sock = connect(@hostname, @port)
   rescue => e
     popup("open: %s", e.message)
     retry
@@ -87,7 +125,7 @@ def connect_to_server
 
   @channel = GLib::IOChannel.new(@sock.to_i)
   
-  @channel.add_watch(GLib::IOChannel::IN) do | channel, condition |
+  @watch_id = @channel.add_watch(GLib::IOChannel::IN) do | channel, condition |
     update
     true
   end
