@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+      android:title="サーバ設定">
+
+    <EditTextPreference
+	android:key="hostname"
+	android:title="ホスト名"
+	android:summary="サーバのホスト名"
+	android:dialogTitle="ホスト名"
+	android:defaultValue="localhost" />
+    
+    <EditTextPreference
+	android:key="port"
+	android:title="ポート番号"
+	android:summary="サーバのポート番号"
+	android:dialogTitle="ポート番号"
+	android:inputType="number"
+	android:maxLength="5"
+	android:defaultValue="0" />
+    
+  </PreferenceCategory>
+
+</PreferenceScreen>

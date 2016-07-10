@@ -16,6 +16,10 @@
             </intent-filter>
         </activity>
 
+	<activity
+	    android:name=".PrefActivity"
+	    android:label="設定" />
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
