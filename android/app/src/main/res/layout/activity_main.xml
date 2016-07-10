@@ -22,7 +22,7 @@
 	android:id="@+id/pref"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="masm11.ddo.jp:10100" />
+        android:text="" />
   </LinearLayout>
 
   <TextView
