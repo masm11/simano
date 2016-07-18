@@ -19,7 +19,7 @@ import android.media.AudioAttributes;
 
 public class MainActivity extends AppCompatActivity {
     private Thread thread;
-    private SimanoThread simano;
+    private SimanoConnection simano;
     private Handler handler;
     private boolean state;
     private String error;
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+	Log.d("main", "onCreate start.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 	
@@ -59,10 +60,11 @@ public class MainActivity extends AppCompatActivity {
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
-	simano = new SimanoThread(this, hostname, port);
+	simano = new SimanoConnection(this, hostname, port);
 	thread = new Thread(simano);
 	thread.start();
 	btn_pref.setText(hostname + ":" + port);
+	Log.d("main", "onCreate end.");
     }
     
     @Override
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	    simano = null;
 	    
-	    simano = new SimanoThread(this, hostname, port);
+	    simano = new SimanoConnection(this, hostname, port);
 	    thread = new Thread(simano);
 	    thread.start();
 	    Button btn_pref = (Button) findViewById(R.id.pref);
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
-	simano = new SimanoThread(this, hostname, port);
+	simano = new SimanoConnection(this, hostname, port);
 	thread = new Thread(simano);
 	thread.start();
 	Button btn_pref = (Button) findViewById(R.id.pref);
