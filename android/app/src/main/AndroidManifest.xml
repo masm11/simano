@@ -20,6 +20,8 @@
 	    android:name=".PrefActivity"
 	    android:label="設定" />
 
+	<service android:name=".SimanoService"/>
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

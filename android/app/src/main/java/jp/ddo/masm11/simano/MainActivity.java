@@ -16,6 +16,9 @@ import android.support.v4.app.TaskStackBuilder;
 import android.app.NotificationManager;
 import android.media.SoundPool;
 import android.media.AudioAttributes;
+import android.content.ServiceConnection;
+import android.content.ComponentName;
+import android.os.IBinder;
 
 public class MainActivity extends AppCompatActivity {
     private Thread thread;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private String error;
     private SoundPool soundPool;
     private int soundId;
+    private SimanoService service = null;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
 		.setMaxStreams(1)
 		.build();
 	soundId = soundPool.load(this, R.raw.office_2, 1);
+	
+	startService(new Intent(this, SimanoService.class));
+	
+	ServiceConnection sconn = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName name, IBinder binder) {
+		Log.d("main", "onServiceConnected.");
+		service = ((SimanoService.SimanoBinder) binder).getService();
+		service.addServer("localhost", 0);
+	    }
+	    public void onServiceDisconnected(ComponentName name) {
+		Log.d("main", "onServiceDisconnected.");
+	    }
+	};
+	bindService(new Intent(this, SimanoService.class), sconn, 0);	// onStart() へ
 	
 	handler = new Handler();
 	
