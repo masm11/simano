@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private SoundPool soundPool;
     private int soundId;
     private SimanoService service = null;
+    private ServiceConnection sconn;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	startService(new Intent(this, SimanoService.class));
 	
-	ServiceConnection sconn = new ServiceConnection() {
+	sconn = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName name, IBinder binder) {
 		Log.d("main", "onServiceConnected.");
 		service = ((SimanoService.SimanoBinder) binder).getService();
@@ -96,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	    thread = null;
 	}
+	
+	unbindService(sconn);
 	
 	super.onDestroy();
     }
