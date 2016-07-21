@@ -7,14 +7,23 @@ import java.nio.ByteBuffer;
 import android.util.Log;
 
 class SimanoConnection implements Runnable {
+    static interface StateListener {
+	public void setState(boolean state);
+    }
+    static interface ErrorListener {
+	public void setError(String msg);
+    }
+    
     private String hostname;
     private int port;
-    private MainActivity activity;
+    private StateListener stateListener;
+    private ErrorListener errorListener;
     
-    SimanoConnection(MainActivity activity, String hostname, int port) {
-	this.activity = activity;
+    SimanoConnection(String hostname, int port, StateListener stateListener, ErrorListener errorListener) {
 	this.hostname = hostname;
 	this.port = port;
+	this.stateListener = stateListener;
+	this.errorListener = errorListener;
     }
     
     @Override
@@ -89,10 +98,10 @@ class SimanoConnection implements Runnable {
     
     private void setState(boolean state) {
 	Log.d("thread", "state: " + state);
-	activity.setState(state);
+	stateListener.setState(state);
     }
     private void setError(String msg) {
 	Log.d("thread", "msg: " + msg);
-	activity.setError(msg);
+	errorListener.setError(msg);
     }
 }

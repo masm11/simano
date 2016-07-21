@@ -21,8 +21,6 @@ import android.content.ComponentName;
 import android.os.IBinder;
 
 public class MainActivity extends AppCompatActivity {
-    private Thread thread;
-    private SimanoConnection simano;
     private Handler handler;
     private boolean state;
     private String error;
@@ -67,39 +65,37 @@ public class MainActivity extends AppCompatActivity {
 	    public void onServiceConnected(ComponentName name, IBinder binder) {
 		Log.d("main", "onServiceConnected.");
 		service = ((SimanoService.SimanoBinder) binder).getService();
-		service.addServer("localhost", 0);
+		retry();
 	    }
 	    public void onServiceDisconnected(ComponentName name) {
 		Log.d("main", "onServiceDisconnected.");
 	    }
 	};
-	bindService(new Intent(this, SimanoService.class), sconn, 0);	// onStart() へ
 	
 	handler = new Handler();
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
-	simano = new SimanoConnection(this, hostname, port);
-	thread = new Thread(simano);
-	thread.start();
 	btn_pref.setText(hostname + ":" + port);
 	Log.d("main", "onCreate end.");
     }
     
     @Override
-    protected void onDestroy() {
-	if (thread != null) {
-	    try {
-		thread.interrupt();
-		thread.join();
-	    } catch (InterruptedException e) {
-		Log.e("main", "onDestroy: join error", e);
-	    }
-	    thread = null;
-	}
+    protected void onStart() {
+	super.onStart();
 	
+	bindService(new Intent(this, SimanoService.class), sconn, 0);
+    }
+    
+    @Override
+    protected void onStop() {
 	unbindService(sconn);
 	
+	super.onStop();
+    }
+    
+    @Override
+    protected void onDestroy() {
 	super.onDestroy();
     }
     
@@ -109,20 +105,8 @@ public class MainActivity extends AppCompatActivity {
 	    int port = PrefActivity.getPort(this);
 	    
 	    clearError();
-	    if (thread != null) {
-		try {
-		    thread.interrupt();
-		    thread.join();
-		} catch (InterruptedException e) {
-		    Log.e("main", "onActivityResult: join error", e);
-		}
-		thread = null;
-	    }
-	    simano = null;
 	    
-	    simano = new SimanoConnection(this, hostname, port);
-	    thread = new Thread(simano);
-	    thread.start();
+	    service.setServer(hostname, port);
 	    Button btn_pref = (Button) findViewById(R.id.pref);
 	    btn_pref.setText(hostname + ":" + port);
 	}
@@ -140,22 +124,9 @@ public class MainActivity extends AppCompatActivity {
 	
 	clearError();
 	
-	if (thread != null) {
-	    try {
-		thread.interrupt();
-		thread.join();
-	    } catch (InterruptedException e) {
-		Log.e("main", "retry: join error", e);
-	    }
-	    thread = null;
-	}
-	simano = null;
-	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
-	simano = new SimanoConnection(this, hostname, port);
-	thread = new Thread(simano);
-	thread.start();
+	service.setServer(hostname, port);
 	Button btn_pref = (Button) findViewById(R.id.pref);
 	btn_pref.setText(hostname + ":" + port);
     }
