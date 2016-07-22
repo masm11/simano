@@ -14,8 +14,6 @@ import android.app.PendingIntent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.app.NotificationManager;
-import android.media.SoundPool;
-import android.media.AudioAttributes;
 import android.content.ServiceConnection;
 import android.content.ComponentName;
 import android.content.BroadcastReceiver;
@@ -38,11 +36,8 @@ public class MainActivity extends AppCompatActivity {
 	}
     }
     
-    private Handler handler;
     private boolean state;
     private String error;
-    private SoundPool soundPool;
-    private int soundId;
     private SimanoService service = null;
     private ServiceConnection sconn;
     private SimanoReceiver receiver;
@@ -59,23 +54,13 @@ public class MainActivity extends AppCompatActivity {
 		openPref();
 	    }
 	});
-
+	
 	Button btn_retry = (Button) findViewById(R.id.retry);
 	btn_retry.setOnClickListener(new OnClickListener() {
 	    public void onClick(View v) {
 		retry();
 	    }
 	});
-	
-	AudioAttributes audioAttr = new AudioAttributes.Builder()
-		.setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_DELAYED)
-		.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-		.build();
-	soundPool = new SoundPool.Builder()
-		.setAudioAttributes(audioAttr)
-		.setMaxStreams(1)
-		.build();
-	soundId = soundPool.load(this, R.raw.office_2, 1);
 	
 	startService(new Intent(this, SimanoService.class));
 	
@@ -93,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
 	receiver = new SimanoReceiver();
 	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
 	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.ERROR"));
-	
-	handler = new Handler();
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);

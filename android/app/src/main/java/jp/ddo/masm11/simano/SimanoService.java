@@ -18,6 +18,8 @@ public class SimanoService extends Service {
     private SimanoConnection conn;
     private SoundPool soundPool;
     private int soundId;
+    private boolean state;
+    private String msg;
     
     public void onCreate() {
 	Log.d("service", "onCreate");
@@ -59,6 +61,11 @@ public class SimanoService extends Service {
 	Log.d("service", "onDestroy");
     }
     
+    synchronized void requestBroadcast() {
+	broadcastState(state);
+	broadcastError(msg);
+    }
+    
     synchronized void setServer(String hostname, int port) {
 	Log.i("service", "setServer: hostname=" + hostname + ", port=" + port);
 	
@@ -75,6 +82,7 @@ public class SimanoService extends Service {
 	conn = new SimanoConnection(hostname, port, new SimanoConnection.StateListener() {
 	    public void setState(boolean state) {
 		Log.d("service", "state: " + state);
+		SimanoService.this.state = state;
 		setNotification(state ? "新着メールがあります" : null);
 		broadcastState(state);
 		if (state)
@@ -83,6 +91,7 @@ public class SimanoService extends Service {
 	}, new SimanoConnection.ErrorListener() {
 	    public void setError(String msg) {
 		Log.d("service", "error: " + msg);
+		SimanoService.this.msg = msg;
 		setNotification(msg);
 		broadcastError(msg);
 		soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
