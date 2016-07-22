@@ -52,6 +52,7 @@ class SimanoConnection implements Runnable {
 		if (r == -1) {
 		    // connection closed.
 		    Log.i("conn", "conn closed.");
+		    setError("Connection broken.");
 		    break;
 		}
 		if (r > 0) {

@@ -61,7 +61,7 @@ public class SimanoService extends Service {
 	conn = new SimanoConnection(hostname, port, new SimanoConnection.StateListener() {
 	    public void setState(boolean state) {
 		Log.d("service", "state: " + state);
-		setNotification(state ? "新着メールがあります" : "新着メールはありません。");
+		setNotification(state ? "新着メールがあります" : null);
 	    }
 	}, new SimanoConnection.ErrorListener() {
 	    public void setError(String msg) {
