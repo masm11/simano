@@ -76,6 +76,7 @@ public class SimanoService extends Service {
 	    public void setState(boolean state) {
 		Log.d("service", "state: " + state);
 		setNotification(state ? "新着メールがあります" : null);
+		broadcastState(state);
 		if (state)
 		    soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
 	    }
@@ -83,6 +84,7 @@ public class SimanoService extends Service {
 	    public void setError(String msg) {
 		Log.d("service", "error: " + msg);
 		setNotification(msg);
+		broadcastError(msg);
 		soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
 	    }
 	});
@@ -110,5 +112,19 @@ public class SimanoService extends Service {
 	    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	    manager.cancel(0);
 	}
+    }
+    
+    private void broadcastState(boolean state) {
+	Log.d("service", "broadcastState: state=" + state);
+	Intent intent = new Intent("jp.ddo.masm11.simano.STATE");
+	intent.putExtra("state", state);
+	sendBroadcast(intent);
+    }
+    
+    private void broadcastError(String msg) {
+	Log.d("service", "broadcastError: msg=" + msg);
+	Intent intent = new Intent("jp.ddo.masm11.simano.ERROR");
+	intent.putExtra("msg", msg);
+	sendBroadcast(intent);
     }
 }

@@ -18,9 +18,26 @@ import android.media.SoundPool;
 import android.media.AudioAttributes;
 import android.content.ServiceConnection;
 import android.content.ComponentName;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.os.IBinder;
 
 public class MainActivity extends AppCompatActivity {
+    private class SimanoReceiver extends BroadcastReceiver {
+	@Override
+	public void onReceive(Context context, Intent intent) {
+	    String action = intent.getAction();
+	    if (action.equals("jp.ddo.masm11.simano.STATE")) {
+		Log.d("main", "onReceive: state: state=" + intent.getBooleanExtra("state", false));
+		setState(intent.getBooleanExtra("state", false));
+	    }
+	    if (action.equals("jp.ddo.masm11.simano.ERROR")) {
+		Log.d("main", "onReceive: error: msg=" + intent.getStringExtra("msg"));
+		setError(intent.getStringExtra("msg"));
+	    }
+	}
+    }
+    
     private Handler handler;
     private boolean state;
     private String error;
@@ -28,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private int soundId;
     private SimanoService service = null;
     private ServiceConnection sconn;
+    private SimanoReceiver receiver;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	};
 	
+	receiver = new SimanoReceiver();
+	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
+	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.ERROR"));
+	
 	handler = new Handler();
 	
 	String hostname = PrefActivity.getHostname(this);
@@ -96,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
     
     @Override
     protected void onDestroy() {
+	unregisterReceiver(receiver);
+	
 	super.onDestroy();
     }
     
@@ -131,37 +155,20 @@ public class MainActivity extends AppCompatActivity {
 	btn_pref.setText(hostname + ":" + port);
     }
     
-    void setState(final boolean state) {
+    private void setState(boolean state) {
 	this.state = state;
-	handler.post(new Runnable() {
-	    @Override
-	    public void run() {
-		TextView text = (TextView) findViewById(R.id.state);
-		text.setText(state ? "新着メールがあります" : "新着メールはありません");
-		
-		updateNotification();
-		
-		if (state)
-		    soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
-	    }
-	});
+	
+	TextView text = (TextView) findViewById(R.id.state);
+	text.setText(state ? "新着メールがあります" : "新着メールはありません");
     }
-    void setError(final String msg) {
+    private void setError(String msg) {
 	this.error = msg;
-	handler.post(new Runnable() {
-	    @Override
-	    public void run() {
-		TextView text = (TextView) findViewById(R.id.errmsg);
-		text.setText(msg);
-		
-		Button btn = (Button) findViewById(R.id.retry);
-		btn.setVisibility(View.VISIBLE);
-		
-		updateNotification();
-		
-		soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
-	    }
-	});
+	
+	TextView text = (TextView) findViewById(R.id.errmsg);
+	text.setText(msg);
+	
+	Button btn = (Button) findViewById(R.id.retry);
+	btn.setVisibility(View.VISIBLE);
     }
     private void clearError() {
 	TextView text = (TextView) findViewById(R.id.errmsg);
@@ -170,35 +177,5 @@ public class MainActivity extends AppCompatActivity {
 	
 	Button btn = (Button) findViewById(R.id.retry);
 	btn.setVisibility(View.INVISIBLE);
-
-	updateNotification();
-    }
-    
-    private void updateNotification() {
-	String msg = null;
-	if (state)
-	    msg = "新着メールがあります";
-	if (error != null)
-	    msg = error;
-	
-	if (msg != null) {
-	    NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-	    builder.setSmallIcon(R.drawable.ic_mail_outline_white_24dp);
-	    builder.setContentTitle("Simano");
-	    builder.setContentText(msg);
-	    
-	    Intent intent = new Intent(this, MainActivity.class);
-	    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-	    stackBuilder.addParentStack(MainActivity.class);
-	    stackBuilder.addNextIntent(intent);
-	    PendingIntent pending = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-	    builder.setContentIntent(pending);
-	    
-	    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-	    manager.notify(0, builder.build());
-	} else {
-	    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-	    manager.cancel(0);
-	}
     }
 }
