@@ -9,14 +9,28 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Binder;
+import android.media.SoundPool;
+import android.media.AudioAttributes;
 import android.util.Log;
 
 public class SimanoService extends Service {
     private Thread thread;
     private SimanoConnection conn;
+    private SoundPool soundPool;
+    private int soundId;
     
     public void onCreate() {
 	Log.d("service", "onCreate");
+	
+	AudioAttributes audioAttr = new AudioAttributes.Builder()
+		.setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_DELAYED)
+		.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+		.build();
+	soundPool = new SoundPool.Builder()
+		.setAudioAttributes(audioAttr)
+		.setMaxStreams(1)
+		.build();
+	soundId = soundPool.load(this, R.raw.office_2, 1);
     }
     
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -62,11 +76,14 @@ public class SimanoService extends Service {
 	    public void setState(boolean state) {
 		Log.d("service", "state: " + state);
 		setNotification(state ? "新着メールがあります" : null);
+		if (state)
+		    soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
 	    }
 	}, new SimanoConnection.ErrorListener() {
 	    public void setError(String msg) {
 		Log.d("service", "error: " + msg);
 		setNotification(msg);
+		soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
 	    }
 	});
 	thread = new Thread(conn);
