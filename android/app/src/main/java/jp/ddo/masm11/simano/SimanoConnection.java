@@ -42,6 +42,8 @@ class SimanoConnection implements Runnable {
 	    }
 	    Log.i("conn", "connection done.");
 	    
+	    sock.socket().setSoTimeout(0);
+	    
 	    // ひどい作りやな…
 	    ByteBuffer rbuf = ByteBuffer.allocate(1);
 	    ByteBuffer wbuf = ByteBuffer.allocate(1);
