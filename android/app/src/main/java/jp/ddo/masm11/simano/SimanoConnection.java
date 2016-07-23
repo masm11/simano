@@ -2,6 +2,7 @@ package jp.ddo.masm11.simano;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.channels.SocketChannel;
 import java.nio.ByteBuffer;
 import android.util.Log;
@@ -50,7 +51,16 @@ class SimanoConnection implements Runnable {
 	    while (true) {
 		rbuf.position(0);
 		rbuf.limit(1);
-		int r = sock.read(rbuf);
+		int r;
+		try {
+		    r = sock.read(rbuf);
+		} catch (SocketException e) {
+		    if (e.toString().contains("ETIMEDOUT")) {
+			Log.w("conn", "ETIMEDOUT", e);
+			continue;
+		    }
+		    throw e;
+		}
 		if (r == -1) {
 		    // connection closed.
 		    Log.i("conn", "conn closed.");
