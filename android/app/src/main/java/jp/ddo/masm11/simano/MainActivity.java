@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 	    public void onServiceConnected(ComponentName name, IBinder binder) {
 		Log.d("main", "onServiceConnected.");
 		service = ((SimanoService.SimanoBinder) binder).getService();
-		retry();
+		service.requestBroadcast();
 	    }
 	    public void onServiceDisconnected(ComponentName name) {
 		Log.d("main", "onServiceDisconnected.");

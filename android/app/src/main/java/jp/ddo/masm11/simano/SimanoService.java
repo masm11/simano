@@ -12,6 +12,8 @@ import android.os.Binder;
 import android.media.SoundPool;
 import android.media.AudioAttributes;
 import android.util.Log;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class SimanoService extends Service {
     private Thread thread;
@@ -33,6 +35,14 @@ public class SimanoService extends Service {
 		.setMaxStreams(1)
 		.build();
 	soundId = soundPool.load(this, R.raw.office_2, 1);
+	
+	PreferenceManager.setDefaultValues(this, R.layout.activity_pref, false);
+	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+	String hostname = settings.getString("hostname", "localhost");
+	int port = Integer.valueOf(settings.getString("port", "0"));
+	Log.i("service", "onCreate: hostname=" + hostname);
+	Log.i("service", "onCreate: port=" + port);
+	setServer(hostname, port);
     }
     
     public int onStartCommand(Intent intent, int flags, int startId) {
