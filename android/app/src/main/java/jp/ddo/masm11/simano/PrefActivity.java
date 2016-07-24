@@ -1,16 +1,18 @@
 package jp.ddo.masm11.simano;
 
+import android.support.v7.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-public class PrefActivity extends PreferenceActivity {
+public class PrefActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
-	addPreferencesFromResource(R.layout.activity_pref);
+	getFragmentManager().beginTransaction()
+		.replace(android.R.id.content, new PrefFragment())
+		.commit();
     }
     
     static String getHostname(Context ctx) {
