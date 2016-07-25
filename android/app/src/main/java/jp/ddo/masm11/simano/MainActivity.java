@@ -29,15 +29,10 @@ public class MainActivity extends AppCompatActivity {
 		Log.d("main", "onReceive: state: state=" + intent.getBooleanExtra("state", false));
 		setState(intent.getBooleanExtra("state", false));
 	    }
-	    if (action.equals("jp.ddo.masm11.simano.ERROR")) {
-		Log.d("main", "onReceive: error: msg=" + intent.getStringExtra("msg"));
-		setError(intent.getStringExtra("msg"));
-	    }
 	}
     }
     
     private boolean state;
-    private String error;
     private SimanoService service = null;
     private ServiceConnection sconn;
     private SimanoReceiver receiver;
@@ -77,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 	
 	receiver = new SimanoReceiver();
 	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
-	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.ERROR"));
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
@@ -111,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
 	    String hostname = PrefActivity.getHostname(this);
 	    int port = PrefActivity.getPort(this);
 	    
-	    clearError();
-	    
 	    service.setServer(hostname, port);
 	    Button btn_pref = (Button) findViewById(R.id.pref);
 	    btn_pref.setText(hostname + ":" + port);
@@ -129,8 +121,6 @@ public class MainActivity extends AppCompatActivity {
     private void retry() {
 	Log.d("main", "retry");
 	
-	clearError();
-	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
 	service.setServer(hostname, port);
@@ -143,22 +133,5 @@ public class MainActivity extends AppCompatActivity {
 	
 	TextView text = (TextView) findViewById(R.id.state);
 	text.setText(state ? "新着メールがあります" : "新着メールはありません");
-    }
-    private void setError(String msg) {
-	this.error = msg;
-	
-	TextView text = (TextView) findViewById(R.id.errmsg);
-	text.setText(msg);
-	
-	Button btn = (Button) findViewById(R.id.retry);
-	btn.setVisibility(View.VISIBLE);
-    }
-    private void clearError() {
-	TextView text = (TextView) findViewById(R.id.errmsg);
-	text.setText("");
-	this.error = null;
-	
-	Button btn = (Button) findViewById(R.id.retry);
-	btn.setVisibility(View.INVISIBLE);
     }
 }

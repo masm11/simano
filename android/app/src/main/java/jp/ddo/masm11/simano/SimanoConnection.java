@@ -8,23 +8,27 @@ import java.nio.ByteBuffer;
 import android.util.Log;
 
 class SimanoConnection implements Runnable {
-    static interface StateListener {
-	public void setState(boolean state);
+    static enum Event {
+	CONNECTING,
+	NO_MAIL,
+	NEW_MAIL,
+	CLOSING,
+	SLEEP,
+	FINISH,
     }
-    static interface ErrorListener {
-	public void setError(String msg);
+    
+    static interface EventListener {
+	public void setEvent(Event ev);
     }
     
     private String hostname;
     private int port;
-    private StateListener stateListener;
-    private ErrorListener errorListener;
+    private EventListener eventListener;
     
-    SimanoConnection(String hostname, int port, StateListener stateListener, ErrorListener errorListener) {
+    SimanoConnection(String hostname, int port, EventListener eventListener) {
 	this.hostname = hostname;
 	this.port = port;
-	this.stateListener = stateListener;
-	this.errorListener = errorListener;
+	this.eventListener = eventListener;
     }
     
     @Override
@@ -35,6 +39,7 @@ class SimanoConnection implements Runnable {
 		long lastWrite = 0;
 		
 		try {
+		    setEvent(Event.CONNECTING);
 		    sock = SocketChannel.open();
 		    sock.configureBlocking(false);
 		    sock.socket().setSoTimeout(0);
@@ -56,7 +61,6 @@ class SimanoConnection implements Runnable {
 			if (r == -1) {
 			    // connection closed.
 			    Log.i("conn", "conn closed.");
-			    setError("Connection broken.");
 			    break;
 			}
 			if (r > 0) {
@@ -64,10 +68,10 @@ class SimanoConnection implements Runnable {
 			    char c = (char) rbuf.get();
 			    if (c == '0') {
 				Log.i("conn", "No new mail.");
-				setState(false);
+				setEvent(Event.NO_MAIL);
 			    } else if (c == '1') {
 				Log.i("conn", "You have new mails.");
-				setState(true);
+				setEvent(Event.NEW_MAIL);
 			    }
 			}
 			
@@ -87,13 +91,12 @@ class SimanoConnection implements Runnable {
 		    }
 		} catch (SocketException e) {
 		    Log.e("conn", "socketexception.", e);
-		    setError(e.toString());
 		} catch (IOException e) {
 		    Log.e("conn", "ioexception.", e);
-		    setError(e.toString());
 		} finally {
 		    if (sock != null) {
 			try {
+			    setEvent(Event.CLOSING);
 			    sock.close();
 			} catch (IOException e) {
 			    Log.e("conn", "close failed", e);
@@ -103,20 +106,18 @@ class SimanoConnection implements Runnable {
 		}
 		
 		Log.d("conn", "sleeping...");
+		setEvent(Event.SLEEP);
 		Thread.sleep(60 * 1000);
 		Log.d("conn", "sleeping... done.");
 	    }
 	} catch (InterruptedException e) {
 	    Log.i("conn", "intr", e);
 	}
+	setEvent(Event.FINISH);
     }
     
-    private void setState(boolean state) {
-	Log.d("thread", "state: " + state);
-	stateListener.setState(state);
-    }
-    private void setError(String msg) {
-	Log.d("thread", "msg: " + msg);
-	errorListener.setError(msg);
+    private void setEvent(Event ev) {
+	Log.d("thread", "event: " + ev);
+	eventListener.setEvent(ev);
     }
 }

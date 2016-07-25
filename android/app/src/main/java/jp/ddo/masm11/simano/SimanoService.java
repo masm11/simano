@@ -73,7 +73,6 @@ public class SimanoService extends Service {
     
     synchronized void requestBroadcast() {
 	broadcastState(state);
-	broadcastError(msg);
     }
     
     synchronized void setServer(String hostname, int port) {
@@ -89,22 +88,29 @@ public class SimanoService extends Service {
 	    thread = null;
 	}
 	
-	conn = new SimanoConnection(hostname, port, new SimanoConnection.StateListener() {
-	    public void setState(boolean state) {
-		Log.d("service", "state: " + state);
-		SimanoService.this.state = state;
-		setNotification(state ? "新着メールがあります" : null);
-		broadcastState(state);
-		if (state)
+	conn = new SimanoConnection(hostname, port, new SimanoConnection.EventListener() {
+	    public void setEvent(SimanoConnection.Event ev) {
+		Log.d("service", "event: " + ev);
+		
+		switch (ev) {
+		case CONNECTING:
+		    break;
+		case NO_MAIL:
+		    setNotification(null);
+		    broadcastState(false);
+		    break;
+		case NEW_MAIL:
+		    setNotification("新着メールがあります");
+		    broadcastState(true);
 		    soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
-	    }
-	}, new SimanoConnection.ErrorListener() {
-	    public void setError(String msg) {
-		Log.d("service", "error: " + msg);
-		SimanoService.this.msg = msg;
-		setNotification(msg);
-		broadcastError(msg);
-		soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
+		    break;
+		case CLOSING:
+		    break;
+		case SLEEP:
+		    break;
+		case FINISH:
+		    break;
+		}
 	    }
 	});
 	thread = new Thread(conn);
@@ -137,13 +143,6 @@ public class SimanoService extends Service {
 	Log.d("service", "broadcastState: state=" + state);
 	Intent intent = new Intent("jp.ddo.masm11.simano.STATE");
 	intent.putExtra("state", state);
-	sendBroadcast(intent);
-    }
-    
-    private void broadcastError(String msg) {
-	Log.d("service", "broadcastError: msg=" + msg);
-	Intent intent = new Intent("jp.ddo.masm11.simano.ERROR");
-	intent.putExtra("msg", msg);
 	sendBroadcast(intent);
     }
 }
