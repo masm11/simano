@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.UnresolvedAddressException;
 import java.nio.ByteBuffer;
 import android.util.Log;
 
@@ -93,6 +94,8 @@ class SimanoConnection implements Runnable {
 		    Log.e("conn", "socketexception.", e);
 		} catch (IOException e) {
 		    Log.e("conn", "ioexception.", e);
+		} catch (UnresolvedAddressException e) {
+		    Log.e("conn", "unknown host.", e);
 		} finally {
 		    if (sock != null) {
 			try {
