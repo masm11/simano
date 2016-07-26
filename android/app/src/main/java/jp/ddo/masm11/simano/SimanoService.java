@@ -69,6 +69,16 @@ public class SimanoService extends Service {
     
     public void onDestroy() {
 	Log.d("service", "onDestroy");
+	
+	if (thread != null) {
+	    try {
+		thread.interrupt();
+		thread.join();
+	    } catch (InterruptedException e) {
+		Log.e("service", "onDestroy: join error", e);
+	    }
+	    thread = null;
+	}
     }
     
     synchronized void requestBroadcast() {
