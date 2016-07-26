@@ -98,11 +98,13 @@ public class SimanoService extends Service {
 		case NO_MAIL:
 		    setNotification(null);
 		    broadcastState(false);
+		    state = false;
 		    break;
 		case NEW_MAIL:
 		    setNotification("新着メールがあります");
 		    broadcastState(true);
 		    soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
+		    state = true;
 		    break;
 		case CLOSING:
 		    break;
