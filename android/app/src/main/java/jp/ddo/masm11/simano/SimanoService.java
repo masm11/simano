@@ -1,6 +1,7 @@
 package jp.ddo.masm11.simano;
 
 import android.content.Context;
+import android.content.ComponentName;
 import android.app.PendingIntent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -137,7 +138,28 @@ public class SimanoService extends Service {
 	    builder.setContentTitle("Simano");
 	    builder.setContentText(msg);
 	    
-	    Intent intent = new Intent(this, MainActivity.class);
+/* [Eメール] が crash。
+	    Intent intent = new Intent(Intent.ACTION_VIEW);
+	    intent.setType("message/rfc822");
+*/
+/* au の [Eメール] が起動。
+	    Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_EMAIL);
+*/
+/* [Eメール] が crash。
+	    Intent intent = new Intent(Intent.ACTION_MAIN);
+	    intent.setType("message/rfc822");
+*/
+/* au の [Eメール] が起動。
+	    Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_EMAIL);
+	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+*/
+/* [Eメール] が crash。
+	    Intent intent = Intent.makeMainActivity(new ComponentName("com.sonymobile.email", "com.sonymobile.email.activity.MessageFileView"));
+	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+*/
+	    Intent intent = Intent.makeMainActivity(new ComponentName("com.sonymobile.email", "com.sonymobile.email.activity.EmailActivity"));
+	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
 	    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 	    stackBuilder.addParentStack(MainActivity.class);
 	    stackBuilder.addNextIntent(intent);
