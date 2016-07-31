@@ -49,13 +49,6 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	});
 	
-	Button btn_retry = (Button) findViewById(R.id.retry);
-	btn_retry.setOnClickListener(new OnClickListener() {
-	    public void onClick(View v) {
-		retry();
-	    }
-	});
-	
 	startService(new Intent(this, SimanoService.class));
 	
 	sconn = new ServiceConnection() {

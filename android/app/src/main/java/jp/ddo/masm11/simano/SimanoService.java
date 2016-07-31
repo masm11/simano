@@ -114,7 +114,7 @@ public class SimanoService extends Service {
 		    setNotification("新着メールがあります");
 		    broadcastState(true);
 		    if (!state)
-			soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
+			soundPool.play(soundId, 0.5f, 0.5f, 0, 0, 1.0f);
 		    state = true;
 		    break;
 		case CLOSING:
