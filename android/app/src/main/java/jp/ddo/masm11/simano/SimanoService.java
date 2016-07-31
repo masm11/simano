@@ -12,7 +12,6 @@ import android.os.IBinder;
 import android.os.Binder;
 import android.media.SoundPool;
 import android.media.AudioAttributes;
-import android.util.Log;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -25,7 +24,7 @@ public class SimanoService extends Service {
     private String msg;
     
     public void onCreate() {
-	Log.d("service", "onCreate");
+	Log.d("");
 	
 	AudioAttributes audioAttr = new AudioAttributes.Builder()
 		.setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_DELAYED)
@@ -41,13 +40,13 @@ public class SimanoService extends Service {
 	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 	String hostname = settings.getString("hostname", "localhost");
 	int port = Integer.valueOf(settings.getString("port", "0"));
-	Log.i("service", "onCreate: hostname=" + hostname);
-	Log.i("service", "onCreate: port=" + port);
+	Log.i("hostname=%s", hostname);
+	Log.i("port=%d", port);
 	setServer(hostname, port);
     }
     
     public int onStartCommand(Intent intent, int flags, int startId) {
-	Log.d("service", "onStartCommand");
+	Log.d("");
 	return START_STICKY;
     }
     
@@ -59,24 +58,24 @@ public class SimanoService extends Service {
     private final IBinder binder = new SimanoBinder();
     
     public IBinder onBind(Intent intent) {
-	Log.d("service", "onBind");
+	Log.d("");
 	return binder;
     }
     
     public boolean onUnbind(Intent intent) {
-	Log.d("service", "onUnbind");
+	Log.d("");
 	return false;
     }
     
     public void onDestroy() {
-	Log.d("service", "onDestroy");
+	Log.d("");
 	
 	if (thread != null) {
 	    try {
 		thread.interrupt();
 		thread.join();
 	    } catch (InterruptedException e) {
-		Log.e("service", "onDestroy: join error", e);
+		Log.e(e, "join error");
 	    }
 	    thread = null;
 	}
@@ -87,21 +86,21 @@ public class SimanoService extends Service {
     }
     
     synchronized void setServer(String hostname, int port) {
-	Log.i("service", "setServer: hostname=" + hostname + ", port=" + port);
+	Log.i("hostname=%s, port=%d.", hostname, port);
 	
 	if (thread != null) {
 	    try {
 		thread.interrupt();
 		thread.join();
 	    } catch (InterruptedException e) {
-		Log.e("service", "setServer: join error", e);
+		Log.e(e, "join error");
 	    }
 	    thread = null;
 	}
 	
 	conn = new SimanoConnection(hostname, port, new SimanoConnection.EventListener() {
 	    public void setEvent(SimanoConnection.Event ev) {
-		Log.d("service", "event: " + ev);
+		Log.d("event: %s", ev.toString());
 		
 		switch (ev) {
 		case CONNECTING:
@@ -175,7 +174,7 @@ public class SimanoService extends Service {
     }
     
     private void broadcastState(boolean state) {
-	Log.d("service", "broadcastState: state=" + state);
+	Log.d("state=%b", state);
 	Intent intent = new Intent("jp.ddo.masm11.simano.STATE");
 	intent.putExtra("state", state);
 	sendBroadcast(intent);

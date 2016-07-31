@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Button;
-import android.util.Log;
 import android.content.Intent;
 import android.content.Context;
 import android.app.PendingIntent;
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 	public void onReceive(Context context, Intent intent) {
 	    String action = intent.getAction();
 	    if (action.equals("jp.ddo.masm11.simano.STATE")) {
-		Log.d("main", "onReceive: state: state=" + intent.getBooleanExtra("state", false));
+		Log.d("state: state=" + intent.getBooleanExtra("state", false));
 		setState(intent.getBooleanExtra("state", false));
 	    }
 	}
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-	Log.d("main", "onCreate start.");
+	Log.d("start.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 	
@@ -61,12 +60,12 @@ public class MainActivity extends AppCompatActivity {
 	
 	sconn = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName name, IBinder binder) {
-		Log.d("main", "onServiceConnected.");
+		Log.d("");
 		service = ((SimanoService.SimanoBinder) binder).getService();
 		service.requestBroadcast();
 	    }
 	    public void onServiceDisconnected(ComponentName name) {
-		Log.d("main", "onServiceDisconnected.");
+		Log.d("");
 	    }
 	};
 	
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
 	btn_pref.setText(hostname + ":" + port);
-	Log.d("main", "onCreate end.");
+	Log.d("end.");
     }
     
     @Override
@@ -119,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void retry() {
-	Log.d("main", "retry");
+	Log.d("");
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
