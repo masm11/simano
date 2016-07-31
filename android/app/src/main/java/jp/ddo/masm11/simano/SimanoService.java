@@ -1,18 +1,18 @@
 package jp.ddo.masm11.simano;
 
-import android.content.Context;
-import android.content.ComponentName;
-import android.app.PendingIntent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.content.Context;
+import android.content.ComponentName;
+import android.content.SharedPreferences;
+import android.content.Intent;
+import android.app.PendingIntent;
 import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Intent;
 import android.os.IBinder;
 import android.os.Binder;
 import android.media.SoundPool;
 import android.media.AudioAttributes;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class SimanoService extends Service {
