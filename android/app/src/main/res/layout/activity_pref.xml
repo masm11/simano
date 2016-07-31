@@ -10,6 +10,7 @@
 	android:title="ホスト名"
 	android:summary="サーバのホスト名"
 	android:dialogTitle="ホスト名"
+	android:inputType="text"
 	android:defaultValue="localhost" />
     
     <EditTextPreference
