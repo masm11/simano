@@ -1,6 +1,8 @@
 package jp.ddo.masm11.simano;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.channels.SocketChannel;
@@ -74,13 +76,8 @@ class SimanoConnection implements Runnable {
 		
 		try {
 		    setEvent(Event.CONNECTING);
-		    sock = SocketChannel.open();
-		    sock.configureBlocking(true);
 		    
-		    Log.i("connection start.");
-		    sock.connect(new InetSocketAddress(hostname, port));
-		    Log.i("connection done.");
-		    
+		    sock = connectTo(hostname, port);
 		    sock.socket().setSoTimeout(0);
 		    
 		    ka = new KeepAlive(sock);
@@ -152,6 +149,51 @@ Log.d("read()... done. r=%d.", r);
 	    Log.i(e, "intr");
 	}
 	setEvent(Event.FINISH);
+    }
+    
+    private SocketChannel connectTo(String hostname, int port)
+	    throws IOException {
+	IOException last_e = null;
+	
+	Log.i("resolving.");
+	InetAddress[] addrs = InetAddress.getAllByName(hostname);
+	Log.i("resolving done.");
+	
+	for (InetAddress addr: addrs)
+	    Log.d("addr: %s", addr.toString());
+	
+	for (boolean use_v6: new boolean[] { true, false } ) {
+	    for (InetAddress addr: addrs) {
+		boolean is_v6 = addr instanceof Inet6Address;
+		if (is_v6 != use_v6)
+		    continue;
+		
+		SocketChannel sock = null;
+		try {
+		    Log.i("connecting to %s", addr.toString());
+		    
+		    sock = SocketChannel.open();
+		    sock.configureBlocking(true);
+		    sock.connect(new InetSocketAddress(addr, port));
+		    
+		    Log.i("connection done.");
+		    return sock;
+		} catch (IOException e) {
+		    Log.w(e, "connection failed.");
+		    
+		    last_e = e;
+		    if (sock != null) {
+			try {
+			    sock.close();
+			} catch (Exception ee) {
+			    Log.w(ee, "close failed.");
+			}
+		    }
+		}
+	    }
+	}
+	
+	throw last_e;
     }
     
     private void setEvent(Event ev) {
