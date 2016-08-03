@@ -1,5 +1,7 @@
 package jp.ddo.masm11.simano;
 
+import java.util.List;
+import java.util.LinkedList;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -7,6 +9,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.ArrayAdapter;
 import android.content.Intent;
 import android.content.Context;
 import android.content.ServiceConnection;
@@ -24,12 +28,17 @@ public class MainActivity extends AppCompatActivity {
 		Log.d("state: state=%b", state);
 		setState(state);
 	    }
+	    if (action.equals("jp.ddo.masm11.simano.DEBUG")) {
+		String msg = intent.getStringExtra("msg");
+		addDebug(msg);
+	    }
 	}
     }
     
     private SimanoService service = null;
     private ServiceConnection sconn;
     private SimanoReceiver receiver;
+    private ArrayAdapter<String> adapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
 		openPref();
 	    }
 	});
+	
+	ListView list_dbg = (ListView) findViewById(R.id.debug);
+	List<String> names = new LinkedList<String>();
+	adapter = new ArrayAdapter<String>(this,
+		android.R.layout.simple_list_item_1, names);
+	list_dbg.setAdapter(adapter);
 	
 	startService(new Intent(this, SimanoService.class));
 	
@@ -58,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
 	};
 	
 	receiver = new SimanoReceiver();
-	registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
+	// registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
+	IntentFilter filter = new IntentFilter();
+	filter.addAction("jp.ddo.masm11.simano.STATE");
+	filter.addAction("jp.ddo.masm11.simano.DEBUG");
+	registerReceiver(receiver, filter);
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
@@ -109,5 +128,13 @@ public class MainActivity extends AppCompatActivity {
     private void setState(boolean state) {
 	TextView text = (TextView) findViewById(R.id.state);
 	text.setText(state ? "新着メールがあります" : "新着メールはありません");
+    }
+    
+    private void addDebug(String msg) {
+	adapter.insert(msg, 0);
+	if (adapter.getCount() > 100) {
+	    String s = adapter.getItem(100);
+	    adapter.remove(s);
+	}
     }
 }

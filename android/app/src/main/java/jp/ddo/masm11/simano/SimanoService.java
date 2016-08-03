@@ -14,6 +14,7 @@ import android.os.Binder;
 import android.media.SoundPool;
 import android.media.AudioAttributes;
 import android.preference.PreferenceManager;
+import java.util.LinkedList;
 
 public class SimanoService extends Service {
     private Thread thread;
@@ -22,6 +23,7 @@ public class SimanoService extends Service {
     private int soundId;
     private boolean state;
     private String msg;
+    private LinkedList<String> debugmsgs = new LinkedList<String>();
     
     public void onCreate() {
 	Log.d("");
@@ -83,6 +85,7 @@ public class SimanoService extends Service {
     
     synchronized void requestBroadcast() {
 	broadcastState(state);
+	broadcastAllDebug();
     }
     
     synchronized void setServer(String hostname, int port) {
@@ -125,7 +128,17 @@ public class SimanoService extends Service {
 		    break;
 		}
 	    }
+	}, new SimanoConnection.DebugListener() {
+	    public void addDebug(String msg) {
+		synchronized (debugmsgs) {
+		    debugmsgs.addLast(msg);
+		    if (debugmsgs.size() > 100)
+			debugmsgs.removeFirst();
+		}
+		broadcastDebug(msg);
+	    }
 	});
+	conn.setDebugDir(getExternalCacheDir());
 	thread = new Thread(conn);
 	thread.start();
     }
@@ -178,5 +191,16 @@ public class SimanoService extends Service {
 	Intent intent = new Intent("jp.ddo.masm11.simano.STATE");
 	intent.putExtra("state", state);
 	sendBroadcast(intent);
+    }
+    private void broadcastDebug(String msg) {
+	Intent intent = new Intent("jp.ddo.masm11.simano.DEBUG");
+	intent.putExtra("msg", msg);
+	sendBroadcast(intent);
+    }
+    private void broadcastAllDebug() {
+	synchronized (debugmsgs) {
+	    for (String msg: debugmsgs)
+		broadcastDebug(msg);
+	}
     }
 }
