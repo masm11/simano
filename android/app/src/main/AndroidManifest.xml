@@ -22,8 +22,10 @@
 
 	<service android:name=".SimanoService"/>
 
+	<receiver android:name=".SimanoService$AlarmReceiver"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

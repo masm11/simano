@@ -36,6 +36,7 @@ class SimanoConnection implements Runnable {
     
     private class KeepAlive implements Runnable {
 	private SocketChannel sock;
+	private boolean alarm = false;
 	KeepAlive(SocketChannel sock) {
 	    this.sock = sock;
 	}
@@ -44,11 +45,15 @@ class SimanoConnection implements Runnable {
 		ByteBuffer wbuf = ByteBuffer.allocate(1);
 		wbuf.put((byte) '0');
 		while (true) {
+		    synchronized (this) {
+			while (!alarm)
+			    wait();
+			alarm = false;
+		    }
 		    Log.d("write keepalive.");
 		    addDebug("Write keepalive.");
 		    wbuf.position(0);
 		    sock.write(wbuf);
-		    Thread.sleep(60 * 1000);
 		}
 	    } catch (Exception e) {
 		Log.w(e, "keepalive");
@@ -65,12 +70,21 @@ class SimanoConnection implements Runnable {
 		}
 	    }
 	}
+	
+	void alarm() {
+	    synchronized (this) {
+		alarm = true;
+		notify();
+	    }
+	}
     }
     
     private String hostname;
     private int port;
     private EventListener eventListener;
     private DebugListener debugListener;
+    private SocketChannel sock = null;
+    private KeepAlive ka = null;
     
     SimanoConnection(String hostname, int port, EventListener eventListener, DebugListener debugListener) {
 	this.hostname = hostname;
@@ -84,8 +98,8 @@ class SimanoConnection implements Runnable {
 	addDebug("Thread started.");
 	try {
 	    while (true) {
-		SocketChannel sock = null;
-		KeepAlive ka = null;
+		sock = null;
+		ka = null;
 		Thread thread = null;
 		
 		try {
@@ -152,6 +166,9 @@ Log.d("read()... done. r=%d.", r);
 			sock = null;
 		    }
 		    
+		    synchronized (this) {
+			ka = null;
+		    }
 		    if (thread != null) {
 			try {
 			    thread.interrupt();
@@ -261,8 +278,8 @@ Log.d("read()... done. r=%d.", r);
 	}
     }
     private void debugPrint(String msg) {
-	synchronized (debugOut) {
-	    if (debugOut != null) {
+	if (debugOut != null) {
+	    synchronized (debugOut) {
 		debugOut.println(msg);
 		debugOut.flush();
 	    }
@@ -271,5 +288,13 @@ Log.d("read()... done. r=%d.", r);
     private void debugClose() {
 	if (debugOut != null)
 	    debugOut.close();
+    }
+    
+    void alarm() {
+	addDebug("Alarm.");
+	synchronized (this) {
+	    if (ka != null)
+		ka.alarm();
+	}
     }
 }

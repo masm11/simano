@@ -6,17 +6,42 @@ import android.content.Context;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.BroadcastReceiver;
+import android.content.ServiceConnection;
 import android.app.PendingIntent;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.app.AlarmManager;
 import android.os.IBinder;
 import android.os.Binder;
+import android.os.PowerManager;
 import android.media.SoundPool;
 import android.media.AudioAttributes;
 import android.preference.PreferenceManager;
 import java.util.LinkedList;
 
 public class SimanoService extends Service {
+    public static class AlarmReceiver extends BroadcastReceiver {
+	private PowerManager.WakeLock wakelock = null;
+	@Override
+	public void onReceive(Context context, Intent intent) {
+	    android.util.Log.i("SimanoService", "alarm!!");
+	    
+	    if (wakelock == null) {
+		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimanoService");
+	    }
+	    
+	    Intent i = new Intent(context, SimanoService.class);
+	    IBinder binder = peekService(context, i);
+	    if (binder != null) {
+		SimanoService service = ((SimanoService.SimanoBinder) binder).getService();
+		wakelock.acquire(5 * 1000);
+		service.alarm();
+	    }
+	}
+    }
+    
     private Thread thread;
     private SimanoConnection conn;
     private SoundPool soundPool;
@@ -45,6 +70,11 @@ public class SimanoService extends Service {
 	Log.i("hostname=%s", hostname);
 	Log.i("port=%d", port);
 	setServer(hostname, port);
+	
+	Intent intent = new Intent(this, AlarmReceiver.class);
+	PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
+	AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+	am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 60 * 1000, sender);
     }
     
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -202,5 +232,10 @@ public class SimanoService extends Service {
 	    for (String msg: debugmsgs)
 		broadcastDebug(msg);
 	}
+    }
+    private void alarm() {
+	android.util.Log.d("SimanoService", "alarm");
+	if (conn != null)
+	    conn.alarm();
     }
 }
