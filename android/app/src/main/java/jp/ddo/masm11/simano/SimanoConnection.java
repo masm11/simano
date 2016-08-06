@@ -85,6 +85,7 @@ class SimanoConnection implements Runnable {
     private DebugListener debugListener;
     private SocketChannel sock = null;
     private KeepAlive ka = null;
+    private boolean alarmed = false;
     
     SimanoConnection(String hostname, int port, EventListener eventListener, DebugListener debugListener) {
 	this.hostname = hostname;
@@ -116,9 +117,9 @@ class SimanoConnection implements Runnable {
 		    ByteBuffer rbuf = ByteBuffer.allocate(1);
 		    while (true) {
 			rbuf.position(0);
-Log.d("read()...");
+			Log.d("read()...");
 			int r = sock.read(rbuf);
-Log.d("read()... done. r=%d.", r);
+			Log.d("read()... done. r=%d.", r);
 			if (r == -1) {
 			    // connection closed.
 			    Log.i("connection closed.");
@@ -183,7 +184,12 @@ Log.d("read()... done. r=%d.", r);
 		Log.d("sleeping...");
 		addDebug("Sleep 1min.");
 		setEvent(Event.SLEEP);
-		Thread.sleep(60 * 1000);
+		// 適当に寝る。
+		synchronized (this) {
+		    alarmed = false;
+		    while (!alarmed)
+			wait();
+		}
 		Log.d("sleeping... done.");
 		addDebug("Sleep done.");
 	    }
@@ -295,6 +301,9 @@ Log.d("read()... done. r=%d.", r);
 	synchronized (this) {
 	    if (ka != null)
 		ka.alarm();
+	    
+	    alarmed = true;
+	    notify();
 	}
     }
 }
