@@ -32,13 +32,11 @@ public class SimanoService extends Service {
 		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimanoService");
 	    }
 	    
+	    wakelock.acquire(5 * 1000);
+	    
 	    Intent i = new Intent(context, SimanoService.class);
-	    IBinder binder = peekService(context, i);
-	    if (binder != null) {
-		SimanoService service = ((SimanoService.SimanoBinder) binder).getService();
-		wakelock.acquire(5 * 1000);
-		service.alarm();
-	    }
+	    i.setAction("jp.ddo.masm11.simano.ALARM");
+	    context.startService(i);
 	}
     }
     
@@ -48,7 +46,6 @@ public class SimanoService extends Service {
     private int soundId;
     private boolean state;
     private String msg;
-    private LinkedList<String> debugmsgs = new LinkedList<String>();
     
     public void onCreate() {
 	Log.d("");
@@ -79,6 +76,11 @@ public class SimanoService extends Service {
     
     public int onStartCommand(Intent intent, int flags, int startId) {
 	Log.d("");
+	if (intent != null) {
+	    String action = intent.getAction();
+	    if (action != null && action.equals("jp.ddo.masm11.simano.ALARM"))
+		alarm();
+	}
 	return START_STICKY;
     }
     
@@ -115,7 +117,6 @@ public class SimanoService extends Service {
     
     synchronized void requestBroadcast() {
 	broadcastState(state);
-	broadcastAllDebug();
     }
     
     synchronized void setServer(String hostname, int port) {
@@ -158,17 +159,7 @@ public class SimanoService extends Service {
 		    break;
 		}
 	    }
-	}, new SimanoConnection.DebugListener() {
-	    public void addDebug(String msg) {
-		synchronized (debugmsgs) {
-		    debugmsgs.addLast(msg);
-		    if (debugmsgs.size() > 100)
-			debugmsgs.removeFirst();
-		}
-		broadcastDebug(msg);
-	    }
 	});
-	conn.setDebugDir(getExternalCacheDir());
 	thread = new Thread(conn);
 	thread.start();
     }
@@ -222,17 +213,7 @@ public class SimanoService extends Service {
 	intent.putExtra("state", state);
 	sendBroadcast(intent);
     }
-    private void broadcastDebug(String msg) {
-	Intent intent = new Intent("jp.ddo.masm11.simano.DEBUG");
-	intent.putExtra("msg", msg);
-	sendBroadcast(intent);
-    }
-    private void broadcastAllDebug() {
-	synchronized (debugmsgs) {
-	    for (String msg: debugmsgs)
-		broadcastDebug(msg);
-	}
-    }
+    
     private void alarm() {
 	android.util.Log.d("SimanoService", "alarm");
 	if (conn != null)

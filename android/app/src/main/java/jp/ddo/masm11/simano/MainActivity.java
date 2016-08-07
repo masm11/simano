@@ -28,10 +28,6 @@ public class MainActivity extends AppCompatActivity {
 		Log.d("state: state=%b", state);
 		setState(state);
 	    }
-	    if (action.equals("jp.ddo.masm11.simano.DEBUG")) {
-		String msg = intent.getStringExtra("msg");
-		addDebug(msg);
-	    }
 	}
     }
     
@@ -53,12 +49,6 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	});
 	
-	ListView list_dbg = (ListView) findViewById(R.id.debug);
-	List<String> names = new LinkedList<String>();
-	adapter = new ArrayAdapter<String>(this,
-		android.R.layout.simple_list_item_1, names);
-	list_dbg.setAdapter(adapter);
-	
 	startService(new Intent(this, SimanoService.class));
 	
 	sconn = new ServiceConnection() {
@@ -76,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 	// registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
 	IntentFilter filter = new IntentFilter();
 	filter.addAction("jp.ddo.masm11.simano.STATE");
-	filter.addAction("jp.ddo.masm11.simano.DEBUG");
 	registerReceiver(receiver, filter);
 	
 	String hostname = PrefActivity.getHostname(this);
@@ -128,13 +117,5 @@ public class MainActivity extends AppCompatActivity {
     private void setState(boolean state) {
 	TextView text = (TextView) findViewById(R.id.state);
 	text.setText(state ? "新着メールがあります" : "新着メールはありません");
-    }
-    
-    private void addDebug(String msg) {
-	adapter.insert(msg, 0);
-	if (adapter.getCount() > 100) {
-	    String s = adapter.getItem(100);
-	    adapter.remove(s);
-	}
     }
 }
