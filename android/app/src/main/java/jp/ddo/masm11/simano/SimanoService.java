@@ -25,7 +25,7 @@ public class SimanoService extends Service {
 	private PowerManager.WakeLock wakelock = null;
 	@Override
 	public void onReceive(Context context, Intent intent) {
-	    android.util.Log.i("SimanoService", "alarm!!");
+	    Log.i("");
 	    
 	    if (wakelock == null) {
 		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -215,7 +215,7 @@ public class SimanoService extends Service {
     }
     
     private void alarm() {
-	android.util.Log.d("SimanoService", "alarm");
+	Log.d("");
 	if (conn != null)
 	    conn.alarm();
     }

@@ -6,7 +6,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.d(klass, method + ": " + msg);
+	android.util.Log.d(klass, method + "(): " + msg);
     }
     
     static void d(Throwable e, String fmt, Object... args) {
@@ -14,7 +14,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.d(klass, method + ": " + msg, e);
+	android.util.Log.d(klass, method + "(): " + msg, e);
     }
     
     static void i(String fmt, Object... args) {
@@ -22,7 +22,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.i(klass, method + ": " + msg);
+	android.util.Log.i(klass, method + "(): " + msg);
     }
     
     static void i(Throwable e, String fmt, Object... args) {
@@ -30,7 +30,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.i(klass, method + ": " + msg, e);
+	android.util.Log.i(klass, method + "(): " + msg, e);
     }
     
     static void w(String fmt, Object... args) {
@@ -38,7 +38,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.w(klass, method + ": " + msg);
+	android.util.Log.w(klass, method + "(): " + msg);
     }
     
     static void w(Throwable e, String fmt, Object... args) {
@@ -46,7 +46,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.w(klass, method + ": " + msg, e);
+	android.util.Log.w(klass, method + "(): " + msg, e);
     }
     
     static void e(String fmt, Object... args) {
@@ -54,7 +54,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.e(klass, method + ": " + msg);
+	android.util.Log.e(klass, method + "(): " + msg);
     }
     
     static void e(Throwable e, String fmt, Object... args) {
@@ -62,7 +62,7 @@ class Log {
 	String klass = stkinf[0];
 	String method = stkinf[1];
 	String msg = String.format(fmt, args);
-	android.util.Log.e(klass, method + ": " + msg, e);
+	android.util.Log.e(klass, method + "(): " + msg, e);
     }
     
     static String[] getStackInfo() {
@@ -76,7 +76,7 @@ class Log {
 	    android.util.Log.i("simano", "" + i + ": method: " + e.getMethodName());
 	}
 */
-	return new String[] { elems[4].getClassName().replace("jp.ddo.masm11.simano.", "").replace("$override", ""),
+	return new String[] { elems[4].getClassName().replace("jp.ddo.masm11.simano.", ""),
 			      elems[4].getMethodName() };
     }
 }
