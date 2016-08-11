@@ -47,6 +47,15 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	});
 	
+	Button btn_dbg = (Button) findViewById(R.id.debug);
+	btn_dbg.setOnClickListener(new OnClickListener() {
+	    public void onClick(View v) {
+		Intent intent = new Intent(MainActivity.this, SimanoService.class);
+		intent.setAction("jp.ddo.masm11.simano.DEBUG");
+		startService(intent);
+	    }
+	});
+	
 	receiver = new SimanoReceiver();
 	// registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
 	IntentFilter filter = new IntentFilter();

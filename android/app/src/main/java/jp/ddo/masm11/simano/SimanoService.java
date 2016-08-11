@@ -1,24 +1,19 @@
 package jp.ddo.masm11.simano;
 
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
-import android.content.ServiceConnection;
 import android.app.PendingIntent;
 import android.app.NotificationManager;
+import android.app.Notification;
 import android.app.Service;
 import android.app.AlarmManager;
+import android.app.TaskStackBuilder;
 import android.os.IBinder;
-import android.os.Binder;
 import android.os.PowerManager;
-import android.media.SoundPool;
-import android.media.AudioAttributes;
 import android.preference.PreferenceManager;
-import java.util.LinkedList;
 
 public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -42,24 +37,11 @@ public class SimanoService extends Service {
     
     private Thread thread;
     private SimanoConnection conn;
-    private SoundPool soundPool;
-    private int soundId;
     private boolean state;
     private String msg;
     
     public void onCreate() {
 	Log.d("");
-	
-	AudioAttributes audioAttr = new AudioAttributes.Builder()
-		.setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_DELAYED)
-		.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-		.setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-		.build();
-	soundPool = new SoundPool.Builder()
-		.setAudioAttributes(audioAttr)
-		.setMaxStreams(1)
-		.build();
-	soundId = soundPool.load(this, R.raw.office_2, 1);
 	
 	PreferenceManager.setDefaultValues(this, R.layout.activity_pref, false);
 	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -88,6 +70,8 @@ public class SimanoService extends Service {
 		    String hostname = intent.getStringExtra("jp.ddo.masm11.simano.HOSTNAME");
 		    int port = intent.getIntExtra("jp.ddo.masm11.simano.PORT", 0);
 		    setServer(hostname, port);
+		} else if (action.equals("jp.ddo.masm11.simano.DEBUG")) {
+		    setNotification("Test");
 		}
 	    }
 	}
@@ -141,8 +125,6 @@ public class SimanoService extends Service {
 		case NEW_MAIL:
 		    setNotification("新着メールがあります");
 		    broadcastState(true);
-		    if (!state)
-			soundPool.play(soundId, 0.3f, 0.3f, 0, 0, 1.0f);
 		    state = true;
 		    break;
 		case CLOSING:
@@ -159,44 +141,26 @@ public class SimanoService extends Service {
     }
     
     private void setNotification(String msg) {
+	NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+	
 	if (msg != null) {
-	    NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-	    builder.setSmallIcon(R.drawable.ic_mail_outline_white_24dp);
-	    builder.setContentTitle("Simano");
-	    builder.setContentText(msg);
-	    
-/* [Eメール] が crash。
-	    Intent intent = new Intent(Intent.ACTION_VIEW);
-	    intent.setType("message/rfc822");
-*/
-/* au の [Eメール] が起動。
-	    Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_EMAIL);
-*/
-/* [Eメール] が crash。
-	    Intent intent = new Intent(Intent.ACTION_MAIN);
-	    intent.setType("message/rfc822");
-*/
-/* au の [Eメール] が起動。
-	    Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_EMAIL);
-	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-*/
-/* [Eメール] が crash。
-	    Intent intent = Intent.makeMainActivity(new ComponentName("com.sonymobile.email", "com.sonymobile.email.activity.MessageFileView"));
-	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-*/
 	    Intent intent = Intent.makeMainActivity(new ComponentName("com.sonymobile.email", "com.sonymobile.email.activity.EmailActivity"));
 	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-	    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-	    stackBuilder.addParentStack(MainActivity.class);
-	    stackBuilder.addNextIntent(intent);
-	    PendingIntent pending = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-	    builder.setContentIntent(pending);
 	    
-	    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-	    manager.notify(0, builder.build());
+	    PendingIntent pending = TaskStackBuilder.create(this)
+		    .addNextIntentWithParentStack(intent)
+		    .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+	    
+	    Notification notification = new Notification.Builder(this)
+		    .setSmallIcon(R.drawable.ic_mail_outline_white_24dp)
+		    .setContentTitle("Simano")
+		    .setContentText(msg)
+		    .setContentIntent(pending)
+		    .setDefaults(Notification.DEFAULT_SOUND)
+		    .build();
+	    
+	    manager.notify(0, notification);
 	} else {
-	    NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	    manager.cancel(0);
 	}
     }
