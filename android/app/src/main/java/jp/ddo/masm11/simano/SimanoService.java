@@ -53,6 +53,7 @@ public class SimanoService extends Service {
 	AudioAttributes audioAttr = new AudioAttributes.Builder()
 		.setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_DELAYED)
 		.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+		.setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
 		.build();
 	soundPool = new SoundPool.Builder()
 		.setAudioAttributes(audioAttr)
@@ -141,7 +142,7 @@ public class SimanoService extends Service {
 		    setNotification("新着メールがあります");
 		    broadcastState(true);
 		    if (!state)
-			soundPool.play(soundId, 0.5f, 0.5f, 0, 0, 1.0f);
+			soundPool.play(soundId, 0.3f, 0.3f, 0, 0, 1.0f);
 		    state = true;
 		    break;
 		case CLOSING:
