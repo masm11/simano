@@ -14,6 +14,8 @@ import android.app.TaskStackBuilder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import java.io.File;
+import java.io.IOException;
 
 public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
@@ -39,9 +41,14 @@ public class SimanoService extends Service {
     private SimanoConnection conn;
     private boolean state;
     private String msg;
+    private File stateFile;
     
     public void onCreate() {
 	Log.d("");
+	
+	stateFile = new File(getFilesDir(), "state.flg");
+	Log.d("stateFile: %s", stateFile.toString());
+	loadState();
 	
 	PreferenceManager.setDefaultValues(this, R.layout.activity_pref, false);
 	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -83,6 +90,7 @@ public class SimanoService extends Service {
 	return null;
     }
     
+    @Override
     public void onDestroy() {
 	Log.d("");
 	
@@ -118,14 +126,20 @@ public class SimanoService extends Service {
 		case CONNECTING:
 		    break;
 		case NO_MAIL:
-		    setNotification(null);
-		    broadcastState(false);
-		    state = false;
+		    if (state) {
+			setNotification(null);
+			broadcastState(false);
+			state = false;
+			saveState();
+		    }
 		    break;
 		case NEW_MAIL:
-		    setNotification("新着メールがあります");
-		    broadcastState(true);
-		    state = true;
+		    if (!state) {
+			setNotification("新着メールがあります");
+			broadcastState(true);
+			state = true;
+			saveState();
+		    }
 		    break;
 		case CLOSING:
 		    break;
@@ -176,5 +190,35 @@ public class SimanoService extends Service {
 	Log.d("");
 	if (conn != null)
 	    conn.alarm();
+    }
+    
+    /* Service の lifecycle を越えて state を保持する。
+     * じゃないと、メールがある時に Service を落とされて、再起動して
+     * メールがまだあると、その時点で Notification の音が鳴ってしまうため。
+     * 保存方法としては、boolean でいいので、ファイルが存在するかどうか
+     * で保存する。
+     */
+    private void saveState() {
+	try {
+	    Log.d("state=%b", state);
+	    if (state)
+		stateFile.createNewFile();
+	    else
+		stateFile.delete();
+	    Log.d("OK.");
+	} catch (IOException e) {
+	    Log.w(e, "file error");
+	} catch (Exception e) {
+	    Log.w(e, "file error");
+	}
+    }
+    private void loadState() {
+	Log.d("");
+	try {
+	    state = stateFile.exists();
+	} catch (Exception e) {
+	    Log.w(e, "file error");
+	}
+	Log.d("state=%b", state);
     }
 }
