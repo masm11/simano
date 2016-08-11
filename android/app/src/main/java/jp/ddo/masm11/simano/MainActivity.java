@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
 	}
     }
     
-    private SimanoService service = null;
-    private ServiceConnection sconn;
     private SimanoReceiver receiver;
     private ArrayAdapter<String> adapter;
     
@@ -49,43 +47,20 @@ public class MainActivity extends AppCompatActivity {
 	    }
 	});
 	
-	startService(new Intent(this, SimanoService.class));
-	
-	sconn = new ServiceConnection() {
-	    public void onServiceConnected(ComponentName name, IBinder binder) {
-		Log.d("");
-		service = ((SimanoService.SimanoBinder) binder).getService();
-		service.requestBroadcast();
-	    }
-	    public void onServiceDisconnected(ComponentName name) {
-		Log.d("");
-	    }
-	};
-	
 	receiver = new SimanoReceiver();
 	// registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
 	IntentFilter filter = new IntentFilter();
 	filter.addAction("jp.ddo.masm11.simano.STATE");
 	registerReceiver(receiver, filter);
 	
+	Intent intent = new Intent(this, SimanoService.class);
+	intent.setAction("jp.ddo.masm11.simano.BCAST_REQ");
+	startService(intent);
+	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
 	btn_pref.setText(hostname + ":" + port);
 	Log.d("end.");
-    }
-    
-    @Override
-    protected void onStart() {
-	super.onStart();
-	
-	bindService(new Intent(this, SimanoService.class), sconn, 0);
-    }
-    
-    @Override
-    protected void onStop() {
-	unbindService(sconn);
-	
-	super.onStop();
     }
     
     @Override
@@ -101,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
 	    String hostname = PrefActivity.getHostname(this);
 	    int port = PrefActivity.getPort(this);
 	    
-	    service.setServer(hostname, port);
+	    Intent intent = new Intent(this, SimanoService.class);
+	    intent.setAction("jp.ddo.masm11.simano.SET_SERVER");
+	    intent.putExtra("jp.ddo.masm11.simano.HOSTNAME", hostname);
+	    intent.putExtra("jp.ddo.masm11.simano.PORT", port);
+	    startService(intent);
+	    
 	    Button btn_pref = (Button) findViewById(R.id.pref);
 	    btn_pref.setText(hostname + ":" + port);
 	}

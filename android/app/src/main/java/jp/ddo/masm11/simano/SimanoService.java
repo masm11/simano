@@ -78,27 +78,24 @@ public class SimanoService extends Service {
 	Log.d("");
 	if (intent != null) {
 	    String action = intent.getAction();
-	    if (action != null && action.equals("jp.ddo.masm11.simano.ALARM"))
-		alarm();
+	    if (action != null) {
+		if (action.equals("jp.ddo.masm11.simano.ALARM"))
+		    alarm();
+		else if (action.equals("jp.ddo.masm11.simano.BCAST_REQ"))
+		    broadcastState(state);
+		else if (action.equals("jp.ddo.masm11.simano.SET_SERVER")) {
+		    String hostname = intent.getStringExtra("jp.ddo.masm11.simano.HOSTNAME");
+		    int port = intent.getIntExtra("jp.ddo.masm11.simano.PORT", 0);
+		    setServer(hostname, port);
+		}
+	    }
 	}
 	return START_STICKY;
     }
     
-    class SimanoBinder extends Binder {
-	SimanoService getService() {
-	    return SimanoService.this;
-	}
-    }
-    private final IBinder binder = new SimanoBinder();
-    
+    @Override
     public IBinder onBind(Intent intent) {
-	Log.d("");
-	return binder;
-    }
-    
-    public boolean onUnbind(Intent intent) {
-	Log.d("");
-	return false;
+	return null;
     }
     
     public void onDestroy() {
@@ -115,11 +112,7 @@ public class SimanoService extends Service {
 	}
     }
     
-    synchronized void requestBroadcast() {
-	broadcastState(state);
-    }
-    
-    synchronized void setServer(String hostname, int port) {
+    private void setServer(String hostname, int port) {
 	Log.i("hostname=%s, port=%d.", hostname, port);
 	
 	if (thread != null) {
