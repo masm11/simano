@@ -62,6 +62,9 @@ public class SimanoService extends Service {
 	PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
 	AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 	am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 60 * 1000, sender);
+
+	if (state)
+	    setNotification("新着メールがあります", false);
     }
     
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -78,7 +81,7 @@ public class SimanoService extends Service {
 		    int port = intent.getIntExtra("jp.ddo.masm11.simano.PORT", 0);
 		    setServer(hostname, port);
 		} else if (action.equals("jp.ddo.masm11.simano.DEBUG")) {
-		    setNotification("Test");
+		    setNotification("Test", true);
 		}
 	    }
 	}
@@ -127,7 +130,7 @@ public class SimanoService extends Service {
 		    break;
 		case NO_MAIL:
 		    if (state) {
-			setNotification(null);
+			setNotification(null, false);
 			broadcastState(false);
 			state = false;
 			saveState();
@@ -135,7 +138,7 @@ public class SimanoService extends Service {
 		    break;
 		case NEW_MAIL:
 		    if (!state) {
-			setNotification("新着メールがあります");
+			setNotification("新着メールがあります", true);
 			broadcastState(true);
 			state = true;
 			saveState();
@@ -154,7 +157,7 @@ public class SimanoService extends Service {
 	thread.start();
     }
     
-    private void setNotification(String msg) {
+    private void setNotification(String msg, boolean sound) {
 	NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	
 	if (msg != null) {
@@ -170,7 +173,7 @@ public class SimanoService extends Service {
 		    .setContentTitle("Simano")
 		    .setContentText(msg)
 		    .setContentIntent(pending)
-		    .setDefaults(Notification.DEFAULT_SOUND)
+		    .setDefaults(sound ? Notification.DEFAULT_SOUND : 0)
 		    .build();
 	    
 	    manager.notify(0, notification);
