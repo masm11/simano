@@ -20,6 +20,7 @@ import java.io.IOException;
 public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
 	private PowerManager.WakeLock wakelock = null;
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 	    Log.i("");
@@ -43,6 +44,7 @@ public class SimanoService extends Service {
     private String msg;
     private File stateFile;
     
+    @Override
     public void onCreate() {
 	Log.d("");
 	
@@ -67,6 +69,7 @@ public class SimanoService extends Service {
 	    setNotification("新着メールがあります", false);
     }
     
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 	Log.d("");
 	if (intent != null) {
@@ -122,6 +125,7 @@ public class SimanoService extends Service {
 	}
 	
 	conn = new SimanoConnection(hostname, port, new SimanoConnection.EventListener() {
+	    @Override
 	    public void setEvent(SimanoConnection.Event ev) {
 		Log.d("event: %s", ev.toString());
 		

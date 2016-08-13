@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	Button btn_pref = (Button) findViewById(R.id.pref);
 	btn_pref.setOnClickListener(new OnClickListener() {
+	    @Override
 	    public void onClick(View v) {
 		openPref();
 	    }
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	Button btn_dbg = (Button) findViewById(R.id.debug);
 	btn_dbg.setOnClickListener(new OnClickListener() {
+	    @Override
 	    public void onClick(View v) {
 		Intent intent = new Intent(MainActivity.this, SimanoService.class);
 		intent.setAction("jp.ddo.masm11.simano.DEBUG");

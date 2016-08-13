@@ -16,6 +16,7 @@ public class PrefFragment extends PreferenceFragment {
 	etp = (EditTextPreference) findPreference("hostname");
 	etp.setSummary(etp.getText());
 	etp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+	    @Override
 	    public boolean onPreferenceChange(Preference pref, Object val) {
 		pref.setSummary(val.toString());
 		return true;
@@ -24,6 +25,7 @@ public class PrefFragment extends PreferenceFragment {
 	etp = (EditTextPreference) findPreference("port");
 	etp.setSummary(etp.getText());
 	etp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+	    @Override
 	    public boolean onPreferenceChange(Preference pref, Object val) {
 		pref.setSummary(val.toString());
 		return true;

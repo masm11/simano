@@ -37,6 +37,7 @@ class SimanoConnection implements Runnable {
 	KeepAlive(SocketChannel sock) {
 	    this.sock = sock;
 	}
+	@Override
 	public void run() {
 	    try {
 		ByteBuffer wbuf = ByteBuffer.allocate(1);
