@@ -19,17 +19,12 @@ import java.io.IOException;
 
 public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
-	private PowerManager.WakeLock wakelock = null;
-	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 	    Log.i("");
 	    
-	    if (wakelock == null) {
-		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimanoService");
-	    }
-	    
+	    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+	    PowerManager.WakeLock wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimanoService");
 	    wakelock.acquire(5 * 1000);
 	    
 	    Intent i = new Intent(context, SimanoService.class);
