@@ -171,6 +171,7 @@ public class SimanoService extends Service {
 		    .setContentTitle("Simano")
 		    .setContentText(msg)
 		    .setContentIntent(pending)
+		    .setOngoing(true)
 		    .setDefaults(sound ? Notification.DEFAULT_SOUND : 0)
 		    .build();
 	    
