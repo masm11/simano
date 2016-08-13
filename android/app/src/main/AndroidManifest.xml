@@ -20,7 +20,8 @@
 	    android:name=".PrefActivity"
 	    android:label="設定" />
 
-	<service android:name=".SimanoService"/>
+	<service android:name=".SimanoService"
+		 android:exported="false"/>
 
 	<receiver android:name=".SimanoService$AlarmReceiver"/>
     </application>
