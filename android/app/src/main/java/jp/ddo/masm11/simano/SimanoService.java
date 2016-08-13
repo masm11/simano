@@ -35,9 +35,8 @@ public class SimanoService extends Service {
     
     private Thread thread;
     private SimanoConnection conn;
-    private boolean state;
-    private String msg;
-    private File stateFile;
+    private volatile boolean state;
+    private volatile File stateFile;
     
     @Override
     public void onCreate() {
