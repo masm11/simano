@@ -66,7 +66,7 @@ class Log {
 		writer.println("================");
 		writer.flush();
 	    } catch (IOException e) {
-		android.util.Log.e("Log", "ioexception", e);
+		// android.util.Log.e("Log", "ioexception", e);
 	    }
 	}
 	if (writer != null) {

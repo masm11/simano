@@ -32,10 +32,4 @@
       android:layout_height="wrap_content"
       android:text="No new message" />
 
-  <Button
-      android:id="@+id/debug"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:text="Debug"/>
-
 </LinearLayout>

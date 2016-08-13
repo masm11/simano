@@ -77,8 +77,6 @@ public class SimanoService extends Service {
 		    String hostname = intent.getStringExtra("jp.ddo.masm11.simano.HOSTNAME");
 		    int port = intent.getIntExtra("jp.ddo.masm11.simano.PORT", 0);
 		    setServer(hostname, port);
-		} else if (action.equals("jp.ddo.masm11.simano.DEBUG")) {
-		    setNotification("Test", true);
 		}
 	    }
 	}
