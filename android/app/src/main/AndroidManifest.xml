@@ -23,7 +23,8 @@
 	<service android:name=".SimanoService"
 		 android:exported="false"/>
 
-	<receiver android:name=".SimanoService$AlarmReceiver"/>
+	<receiver android:name=".SimanoService$AlarmReceiver"
+		  android:exported="false"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
