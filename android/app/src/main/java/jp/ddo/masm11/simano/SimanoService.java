@@ -183,7 +183,7 @@ public class SimanoService extends Service {
     private void broadcastState(boolean state) {
 	Log.d("state=%b", state);
 	Intent intent = new Intent("jp.ddo.masm11.simano.STATE");
-	intent.putExtra("state", state);
+	intent.putExtra("jp.ddo.masm11.simano.STATE", state);
 	sendBroadcast(intent);
     }
     

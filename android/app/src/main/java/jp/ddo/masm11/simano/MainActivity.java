@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 	public void onReceive(Context context, Intent intent) {
 	    String action = intent.getAction();
 	    if (action.equals("jp.ddo.masm11.simano.STATE")) {
-		boolean state = intent.getBooleanExtra("state", false);
+		boolean state = intent.getBooleanExtra("jp.ddo.masm11.simano.STATE", false);
 		Log.d("state: state=%b", state);
 		setState(state);
 	    }
