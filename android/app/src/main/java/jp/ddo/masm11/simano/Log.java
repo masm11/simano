@@ -56,7 +56,7 @@ class Log {
 	String msg = buf.toString();
 	
 	android.util.Log.println(priority, klass, msg);
-	log_to_file(priority, klass, msg);
+	log_to_file(klass, msg);
     }
     
     private static File logDir = null;
@@ -66,7 +66,7 @@ class Log {
     
     private static PrintWriter writer = null;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
-    synchronized private static void log_to_file(int priority, String tag, String msg) {
+    synchronized private static void log_to_file(String tag, String msg) {
 	if (writer == null) {
 	    try {
 		writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(logDir, "log.txt"), true)));
