@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 class SimanoConnection implements Runnable {
-    static enum Event {
+    enum Event {
 	CONNECTING,
 	NO_MAIL,
 	NEW_MAIL,
@@ -27,8 +27,8 @@ class SimanoConnection implements Runnable {
 	FINISH,
     }
     
-    static interface EventListener {
-	public void setEvent(Event ev);
+    interface EventListener {
+	void setEvent(Event ev);
     }
     
     private class KeepAlive implements Runnable {
