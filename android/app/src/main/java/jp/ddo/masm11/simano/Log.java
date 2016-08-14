@@ -65,7 +65,7 @@ class Log {
     }
     
     private static PrintWriter writer = null;
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
     synchronized private static void log_to_file(int priority, String tag, String msg) {
 	if (writer == null) {
 	    try {

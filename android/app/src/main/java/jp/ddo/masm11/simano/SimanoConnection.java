@@ -32,7 +32,7 @@ class SimanoConnection implements Runnable {
     }
     
     private class KeepAlive implements Runnable {
-	private SocketChannel sock;
+	private final SocketChannel sock;
 	private boolean alarm = false;
 	KeepAlive(SocketChannel sock) {
 	    this.sock = sock;
@@ -75,9 +75,9 @@ class SimanoConnection implements Runnable {
 	}
     }
     
-    private String hostname;
-    private int port;
-    private EventListener eventListener;
+    private final String hostname;
+    private final int port;
+    private final EventListener eventListener;
     private KeepAlive ka = null;
     private boolean alarmed = false;
     
