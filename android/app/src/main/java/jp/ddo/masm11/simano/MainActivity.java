@@ -1,19 +1,13 @@
 package jp.ddo.masm11.simano;
 
-import java.util.List;
-import java.util.LinkedList;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.content.Intent;
 import android.content.Context;
-import android.content.ServiceConnection;
-import android.content.ComponentName;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 

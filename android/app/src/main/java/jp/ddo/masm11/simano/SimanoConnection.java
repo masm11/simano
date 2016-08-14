@@ -1,9 +1,5 @@
 package jp.ddo.masm11.simano;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.PrintWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Inet6Address;
@@ -14,8 +10,6 @@ import java.nio.channels.UnresolvedAddressException;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 class SimanoConnection implements Runnable {
     enum Event {
