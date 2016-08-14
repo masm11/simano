@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 class Log {
     static void d(String fmt, Object... args) {
@@ -64,15 +65,17 @@ class Log {
     }
     
     private static PrintWriter writer = null;
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
     synchronized private static void log_to_file(int priority, String tag, String msg) {
 	if (writer == null) {
 	    try {
 		writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(logDir, "log.txt"), true)));
 		writer.println("================");
 		writer.flush();
+	    } catch (NullPointerException e) {
+		android.util.Log.e("Log", "nullpointerexception", e);
 	    } catch (IOException e) {
-		// android.util.Log.e("Log", "ioexception", e);
+		android.util.Log.e("Log", "ioexception", e);
 	    }
 	}
 	if (writer != null) {

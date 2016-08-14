@@ -21,7 +21,7 @@ public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
-	    Log.setLogDir(context.getCacheDir());
+	    Log.setLogDir(context.getExternalCacheDir());
 	    Log.i("");
 	    
 	    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -41,7 +41,7 @@ public class SimanoService extends Service {
     
     @Override
     public void onCreate() {
-	Log.setLogDir(getCacheDir());
+	Log.setLogDir(getExternalCacheDir());
 	Log.d("");
 	
 	stateFile = new File(getFilesDir(), "state.flg");
