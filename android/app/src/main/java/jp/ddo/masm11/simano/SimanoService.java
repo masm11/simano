@@ -71,14 +71,18 @@ public class SimanoService extends Service {
 	if (intent != null) {
 	    String action = intent.getAction();
 	    if (action != null) {
-		if (action.equals("jp.ddo.masm11.simano.ALARM"))
+		switch (action) {
+		case "jp.ddo.masm11.simano.ALARM":
 		    alarm();
-		else if (action.equals("jp.ddo.masm11.simano.BCAST_REQ"))
+		    break;
+		case "jp.ddo.masm11.simano.BCAST_REQ":
 		    broadcastState(state);
-		else if (action.equals("jp.ddo.masm11.simano.SET_SERVER")) {
+		    break;
+		case "jp.ddo.masm11.simano.SET_SERVER":
 		    String hostname = intent.getStringExtra("jp.ddo.masm11.simano.HOSTNAME");
 		    int port = intent.getIntExtra("jp.ddo.masm11.simano.PORT", 0);
 		    setServer(hostname, port);
+		    break;
 		}
 	    }
 	}
@@ -218,8 +222,6 @@ public class SimanoService extends Service {
 	    else
 		stateFile.delete();
 	    Log.d("OK.");
-	} catch (IOException e) {
-	    Log.w(e, "file error");
 	} catch (Exception e) {
 	    Log.w(e, "file error");
 	}
