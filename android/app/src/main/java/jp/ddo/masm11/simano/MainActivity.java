@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 	
 	Button btn_pref = (Button) findViewById(R.id.pref);
+	assert btn_pref != null;
 	btn_pref.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 	    startService(intent);
 	    
 	    Button btn_pref = (Button) findViewById(R.id.pref);
+	    assert btn_pref != null;
 	    btn_pref.setText(getResources().getString(R.string.server_format, hostname, port));
 	}
 	
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     
     private void setState(boolean state) {
 	TextView text = (TextView) findViewById(R.id.state);
+	assert text != null;
 	text.setText(state ? "新着メールがあります" : "新着メールはありません");
     }
 }
