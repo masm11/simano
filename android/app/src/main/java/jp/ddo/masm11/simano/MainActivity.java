@@ -10,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.content.Intent;
 import android.content.Context;
 import android.content.ServiceConnection;
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private SimanoReceiver receiver;
-    private ArrayAdapter<String> adapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
