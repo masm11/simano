@@ -144,7 +144,6 @@ class SimanoConnection implements Runnable {
 			} catch (IOException e) {
 			    Log.e(e, "close failed");
 			}
-			sock = null;
 		    }
 		    
 		    synchronized (this) {
@@ -157,7 +156,6 @@ class SimanoConnection implements Runnable {
 			} catch (InterruptedException e) {
 			    Log.w(e, "join failed.");
 			}
-			thread = null;
 		    }
 		}
 		
