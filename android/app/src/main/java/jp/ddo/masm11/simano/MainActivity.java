@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 	
 	String hostname = PrefActivity.getHostname(this);
 	int port = PrefActivity.getPort(this);
-	btn_pref.setText(hostname + ":" + port);
+	btn_pref.setText(getResources().getString(R.string.server_format, hostname, port));
 	Log.d("end.");
     }
     
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 	    startService(intent);
 	    
 	    Button btn_pref = (Button) findViewById(R.id.pref);
-	    btn_pref.setText(hostname + ":" + port);
+	    btn_pref.setText(getResources().getString(R.string.server_format, hostname, port));
 	}
 	
 	super.onActivityResult(requestCode, resultCode, data);
