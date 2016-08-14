@@ -10,7 +10,7 @@ public class PrefFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
-	addPreferencesFromResource(R.layout.activity_pref);
+	addPreferencesFromResource(R.xml.activity_pref);
 	
 	EditTextPreference etp;
 	etp = (EditTextPreference) findPreference("hostname");

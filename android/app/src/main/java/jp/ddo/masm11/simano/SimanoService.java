@@ -21,6 +21,7 @@ public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
+	    Log.setLogDir(context.getCacheDir());
 	    Log.i("");
 	    
 	    PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -40,13 +41,14 @@ public class SimanoService extends Service {
     
     @Override
     public void onCreate() {
+	Log.setLogDir(getCacheDir());
 	Log.d("");
 	
 	stateFile = new File(getFilesDir(), "state.flg");
 	Log.d("stateFile: %s", stateFile.toString());
 	loadState();
 	
-	PreferenceManager.setDefaultValues(this, R.layout.activity_pref, false);
+	PreferenceManager.setDefaultValues(this, R.xml.activity_pref, false);
 	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 	String hostname = settings.getString("hostname", "localhost");
 	int port = Integer.valueOf(settings.getString("port", "0"));
@@ -160,9 +162,19 @@ public class SimanoService extends Service {
 	    Intent intent = Intent.makeMainActivity(new ComponentName("com.sonymobile.email", "com.sonymobile.email.activity.EmailActivity"));
 	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	    
-	    PendingIntent pending = TaskStackBuilder.create(this)
-		    .addNextIntentWithParentStack(intent)
-		    .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+	    PendingIntent pending;
+	    try {
+		pending = TaskStackBuilder.create(this)
+			.addNextIntentWithParentStack(intent)
+			.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+	    } catch (IllegalArgumentException e) {
+		Intent i = new Intent(this, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		
+		pending = TaskStackBuilder.create(this)
+			.addNextIntentWithParentStack(i)
+			.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+	    }
 	    
 	    Notification notification = new Notification.Builder(this)
 		    .setSmallIcon(R.drawable.ic_mail_outline_white_24dp)

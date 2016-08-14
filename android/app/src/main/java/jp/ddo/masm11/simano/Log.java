@@ -1,5 +1,6 @@
 package jp.ddo.masm11.simano;
 
+import java.io.File;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -57,12 +58,17 @@ class Log {
 	log_to_file(priority, klass, msg);
     }
     
+    private static File logDir = null;
+    synchronized static void setLogDir(File dir) {
+	logDir = dir;
+    }
+    
     private static PrintWriter writer = null;
     private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     synchronized private static void log_to_file(int priority, String tag, String msg) {
 	if (writer == null) {
 	    try {
-		writer = new PrintWriter(new BufferedWriter(new FileWriter("/sdcard/Android/data/jp.ddo.masm11.simano/cache/log.txt", true)));
+		writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(logDir, "log.txt"), true)));
 		writer.println("================");
 		writer.flush();
 	    } catch (IOException e) {
