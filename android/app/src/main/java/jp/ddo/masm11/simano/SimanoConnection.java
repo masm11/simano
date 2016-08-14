@@ -78,7 +78,6 @@ class SimanoConnection implements Runnable {
     private String hostname;
     private int port;
     private EventListener eventListener;
-    private SocketChannel sock = null;
     private KeepAlive ka = null;
     private boolean alarmed = false;
     
@@ -93,9 +92,9 @@ class SimanoConnection implements Runnable {
 	Log.i("Thread started.");
 	try {
 	    while (true) {
-		sock = null;
-		ka = null;
+		SocketChannel sock = null;
 		Thread thread = null;
+		ka = null;
 		
 		try {
 		    setEvent(Event.CONNECTING);
