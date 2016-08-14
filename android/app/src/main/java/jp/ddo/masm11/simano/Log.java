@@ -45,7 +45,7 @@ class Log {
     private static void common(int priority, Throwable e, String fmt, Object... args) {
 	String[] stkinf = getStackInfo();
 	String klass = stkinf[0];
-	StringBuffer buf = new StringBuffer();
+	StringBuilder buf = new StringBuilder();
 	buf.append(stkinf[1]);
 	buf.append("(): ");
 	buf.append(String.format(fmt, args));
