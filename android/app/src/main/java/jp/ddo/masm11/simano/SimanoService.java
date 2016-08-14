@@ -216,10 +216,13 @@ public class SimanoService extends Service {
     private void saveState() {
 	try {
 	    Log.d("state=%b", state);
-	    if (state)
-		stateFile.createNewFile();
-	    else
-		stateFile.delete();
+	    if (state) {
+		if (!stateFile.createNewFile())
+		    Log.w("Couldn't create state file: %s", stateFile.toString());
+	    } else {
+		if (!stateFile.delete())
+		    Log.w("Couldn't delete state file: %s", stateFile.toString());
+	    }
 	    Log.d("OK.");
 	} catch (Exception e) {
 	    Log.w(e, "file error");
