@@ -1,6 +1,6 @@
 package jp.ddo.masm11.simano;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,7 +11,7 @@ import android.content.Context;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private class SimanoReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
