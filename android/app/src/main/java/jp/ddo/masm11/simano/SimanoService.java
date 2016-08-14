@@ -15,7 +15,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import java.io.File;
-import java.io.IOException;
 
 public class SimanoService extends Service {
     public static class AlarmReceiver extends BroadcastReceiver {
