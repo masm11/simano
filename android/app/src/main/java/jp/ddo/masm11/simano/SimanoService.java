@@ -61,7 +61,7 @@ public class SimanoService extends Service {
 	am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 60 * 1000, sender);
 
 	if (state)
-	    setNotification("新着メールがあります", false);
+	    setNotification(true, false);
     }
     
     @Override
@@ -129,9 +129,11 @@ public class SimanoService extends Service {
 		switch (ev) {
 		case CONNECTING:
 		    break;
+		case READY:
+		    break;
 		case NO_MAIL:
 		    if (state) {
-			setNotification(null, false);
+			setNotification(false, false);
 			broadcastState(false);
 			state = false;
 			saveState();
@@ -139,7 +141,7 @@ public class SimanoService extends Service {
 		    break;
 		case NEW_MAIL:
 		    if (!state) {
-			setNotification("新着メールがあります", true);
+			setNotification(true, true);
 			broadcastState(true);
 			state = true;
 			saveState();
@@ -158,10 +160,10 @@ public class SimanoService extends Service {
 	thread.start();
     }
     
-    private void setNotification(String msg, boolean sound) {
+    private void setNotification(boolean state, boolean sound) {
 	NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	
-	if (msg != null) {
+	if (state) {
 	    Intent intent = Intent.makeMainActivity(new ComponentName("com.sonymobile.email", "com.sonymobile.email.activity.EmailActivity"));
 	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	    
@@ -181,8 +183,8 @@ public class SimanoService extends Service {
 	    
 	    Notification notification = new Notification.Builder(this)
 		    .setSmallIcon(R.drawable.ic_mail_outline_white_24dp)
-		    .setContentTitle("Simano")
-		    .setContentText(msg)
+		    .setContentTitle(getResources().getString(R.string.app_name))
+		    .setContentText(getResources().getString(R.string.new_mail))
 		    .setContentIntent(pending)
 		    .setOngoing(true)
 		    .setDefaults(sound ? Notification.DEFAULT_SOUND : 0)

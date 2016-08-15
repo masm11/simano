@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 class SimanoConnection implements Runnable {
     enum Event {
 	CONNECTING,
+	READY,
 	NO_MAIL,
 	NEW_MAIL,
 	CLOSING,
@@ -100,6 +101,7 @@ class SimanoConnection implements Runnable {
 		    thread = new Thread(ka);
 		    thread.start();
 		    
+		    setEvent(Event.READY);
 		    Log.i("Entering recv loop.");
 		    ByteBuffer rbuf = ByteBuffer.allocate(1);
 		    while (true) {
@@ -137,9 +139,9 @@ class SimanoConnection implements Runnable {
 		} catch (UnresolvedAddressException e) {
 		    Log.e(e, "unknown host.");
 		} finally {
+		    setEvent(Event.CLOSING);
 		    if (sock != null) {
 			try {
-			    setEvent(Event.CLOSING);
 			    sock.close();
 			} catch (IOException e) {
 			    Log.e(e, "close failed");
