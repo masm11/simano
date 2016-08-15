@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
   <PreferenceCategory
+      android:key="server_settings"
       android:title="サーバ設定">
 
     <EditTextPreference
