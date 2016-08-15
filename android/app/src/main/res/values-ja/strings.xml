@@ -1,0 +1,5 @@
+<resources>
+    <string name="server">サーバ</string>
+    <string name="new_mail">新着メールがあります</string>
+    <string name="no_mail">新着メールはありません</string>
+</resources>

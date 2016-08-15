@@ -93,6 +93,6 @@ public class MainActivity extends Activity {
     private void setState(boolean state) {
 	TextView text = (TextView) findViewById(R.id.state);
 	assert text != null;
-	text.setText(state ? "新着メールがあります" : "新着メールはありません");
+	text.setText(state ? R.string.new_mail : R.string.no_mail);
     }
 }
