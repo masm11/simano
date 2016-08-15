@@ -59,9 +59,9 @@ class Log {
 	log_to_file(klass, msg);
     }
     
-    private static File logDir = null;
+    private static File logFile = null;
     synchronized static void setLogDir(File dir) {
-	logDir = dir;
+	logFile = new File(dir, "log.txt");
     }
     
     private static PrintWriter writer = null;
@@ -69,9 +69,11 @@ class Log {
     synchronized private static void log_to_file(String tag, String msg) {
 	if (writer == null) {
 	    try {
-		writer = new PrintWriter(new BufferedWriter(new FileWriter(new File(logDir, "log.txt"), true)));
-		writer.println("================");
-		writer.flush();
+		if (logFile.exists()) {
+		    writer = new PrintWriter(new BufferedWriter(new FileWriter(logFile, true)));
+		    writer.println("================");
+		    writer.flush();
+		}
 	    } catch (NullPointerException e) {
 		android.util.Log.e("Log", "nullpointerexception", e);
 	    } catch (IOException e) {
