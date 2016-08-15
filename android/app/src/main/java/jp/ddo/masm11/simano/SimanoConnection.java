@@ -37,6 +37,7 @@ class SimanoConnection implements Runnable {
 	    try {
 		ByteBuffer wbuf = ByteBuffer.allocate(1);
 		wbuf.put((byte) '0');
+		//noinspection InfiniteLoopStatement
 		while (true) {
 		    synchronized (this) {
 			while (!alarm)
@@ -86,6 +87,7 @@ class SimanoConnection implements Runnable {
     public void run() {
 	Log.i("Thread started.");
 	try {
+	    //noinspection InfiniteLoopStatement
 	    while (true) {
 		SocketChannel sock = null;
 		Thread thread = null;
