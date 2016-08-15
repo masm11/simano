@@ -6,21 +6,21 @@
 
   <PreferenceCategory
       android:key="server_settings"
-      android:title="サーバ設定">
+      android:title="@string/server_settings">
 
     <EditTextPreference
 	android:key="hostname"
-	android:title="ホスト名"
-	android:summary="サーバのホスト名"
-	android:dialogTitle="ホスト名"
+	android:title="@string/hostname_title"
+	android:summary="@string/hostname_summary"
+	android:dialogTitle="@string/hostname_title"
 	android:inputType="text"
 	android:defaultValue="localhost" />
     
     <EditTextPreference
 	android:key="port"
-	android:title="ポート番号"
-	android:summary="サーバのポート番号"
-	android:dialogTitle="ポート番号"
+	android:title="@string/port_title"
+	android:summary="@string/port_summary"
+	android:dialogTitle="@string/port_title"
 	android:inputType="number"
 	android:maxLength="5"
 	android:defaultValue="0" />

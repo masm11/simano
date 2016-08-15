@@ -4,4 +4,10 @@
     <string name="server_format">%1$s:%2$d</string>
     <string name="new_mail">新着メールがあります</string>
     <string name="no_mail">新着メールはありません</string>
+    
+    <string name="server_settings">サーバ設定</string>
+    <string name="hostname_title">ホスト名</string>
+    <string name="hostname_summary">サーバのホスト名</string>
+    <string name="port_title">ポート番号</string>
+    <string name="port_summary">サーバのポート番号</string>
 </resources>

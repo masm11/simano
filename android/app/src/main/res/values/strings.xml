@@ -4,4 +4,10 @@
     <string name="server_format">%1$s:%2$d</string>
     <string name="new_mail">You have new mails.</string>
     <string name="no_mail">You have no mail.</string>
+    
+    <string name="server_settings">Server Settings</string>
+    <string name="hostname_title">Hostname</string>
+    <string name="hostname_summary">Server\'s hostname</string>
+    <string name="port_title">Port Number</string>
+    <string name="port_summary">Server\'s port number</string>
 </resources>
