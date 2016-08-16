@@ -37,6 +37,7 @@ public class SimanoService extends Service {
     private SimanoConnection conn;
     private volatile boolean state;
     private volatile File stateFile;
+    private volatile SimanoConnection.Event appState;
     
     @Override
     public void onCreate() {
@@ -76,6 +77,7 @@ public class SimanoService extends Service {
 		    break;
 		case "jp.ddo.masm11.simano.BCAST_REQ":
 		    broadcastState(state);
+		    broadcastAppState(appState);
 		    break;
 		case "jp.ddo.masm11.simano.SET_SERVER":
 		    String hostname = intent.getStringExtra("jp.ddo.masm11.simano.HOSTNAME");
@@ -128,8 +130,12 @@ public class SimanoService extends Service {
 		
 		switch (ev) {
 		case CONNECTING:
+		    appState = ev;
+		    broadcastAppState(appState);
 		    break;
 		case READY:
+		    appState = ev;
+		    broadcastAppState(appState);
 		    break;
 		case NO_MAIL:
 		    if (state) {
@@ -148,10 +154,16 @@ public class SimanoService extends Service {
 		    }
 		    break;
 		case CLOSING:
+		    appState = ev;
+		    broadcastAppState(appState);
 		    break;
 		case SLEEP:
+		    appState = ev;
+		    broadcastAppState(appState);
 		    break;
 		case FINISH:
+		    appState = ev;
+		    broadcastAppState(appState);
 		    break;
 		}
 	    }
@@ -201,6 +213,15 @@ public class SimanoService extends Service {
 	Intent intent = new Intent("jp.ddo.masm11.simano.STATE");
 	intent.putExtra("jp.ddo.masm11.simano.STATE", state);
 	sendBroadcast(intent);
+    }
+    
+    private void broadcastAppState(SimanoConnection.Event appState) {
+	if (appState != null) {
+	    Log.d("appState=%s", appState);
+	    Intent intent = new Intent("jp.ddo.masm11.simano.APP_STATE");
+	    intent.putExtra("jp.ddo.masm11.simano.APP_STATE", appState.toString());
+	    sendBroadcast(intent);
+	}
     }
     
     private void alarm() {

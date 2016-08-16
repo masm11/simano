@@ -21,6 +21,11 @@ public class MainActivity extends AppCompatActivity {
 		Log.d("state: state=%b", state);
 		setState(state);
 	    }
+	    if (action.equals("jp.ddo.masm11.simano.APP_STATE")) {
+		String appState = intent.getStringExtra("jp.ddo.masm11.simano.APP_STATE");
+		Log.d("appState: appState=%s", appState);
+		setAppState(appState);
+	    }
 	}
     }
     
@@ -43,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
 	});
 	
 	receiver = new SimanoReceiver();
-	// registerReceiver(receiver, new IntentFilter("jp.ddo.masm11.simano.STATE"));
 	IntentFilter filter = new IntentFilter();
 	filter.addAction("jp.ddo.masm11.simano.STATE");
+	filter.addAction("jp.ddo.masm11.simano.APP_STATE");
 	registerReceiver(receiver, filter);
 	
 	Intent intent = new Intent(this, SimanoService.class);
@@ -94,5 +99,34 @@ public class MainActivity extends AppCompatActivity {
 	TextView text = (TextView) findViewById(R.id.state);
 	assert text != null;
 	text.setText(state ? R.string.new_mail : R.string.no_mail);
+    }
+    
+    private void setAppState(String appState) {
+	TextView text = (TextView) findViewById(R.id.app_state);
+	assert text != null;
+	int res_id = 0;
+	switch (appState) {
+	case "CONNECTING":
+	    res_id = R.string.app_connecting;
+	    break;
+	case "READY":
+	    res_id = R.string.app_ready;
+	    break;
+	case "NO_MAIL":
+	    break;
+	case "NEW_MAIL":
+	    break;
+	case "CLOSING":
+	    res_id = R.string.app_closing;
+	    break;
+	case "SLEEP":
+	    res_id = R.string.app_sleep;
+	    break;
+	case "FINISH":
+	    res_id = R.string.app_finish;
+	    break;
+	}
+	if (res_id != 0)
+	    text.setText(res_id);
     }
 }
