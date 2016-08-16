@@ -11,9 +11,9 @@
     <string name="port_title">ポート番号</string>
     <string name="port_summary">サーバのポート番号</string>
     
-    <string name="app_connecting">接続中...</string>
-    <string name="app_ready">動作中.</string>
-    <string name="app_closing">切断中...</string>
-    <string name="app_sleep">休止中...</string>
-    <string name="app_finish">終了.</string>
+    <string name="app_connecting">接続中</string>
+    <string name="app_ready">動作中</string>
+    <string name="app_closing">切断中</string>
+    <string name="app_sleep">休止中</string>
+    <string name="app_finish">終了</string>
 </resources>

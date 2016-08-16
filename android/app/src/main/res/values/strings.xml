@@ -11,9 +11,9 @@
     <string name="port_title">Port Number</string>
     <string name="port_summary">Server\'s port number</string>
 
-    <string name="app_connecting">Connecting...</string>
-    <string name="app_ready">Ready.</string>
-    <string name="app_closing">Closing...</string>
-    <string name="app_sleep">Sleep...</string>
-    <string name="app_finish">Finished.</string>
+    <string name="app_connecting">Connecting</string>
+    <string name="app_ready">Ready</string>
+    <string name="app_closing">Closing</string>
+    <string name="app_sleep">Sleep</string>
+    <string name="app_finish">Finished</string>
 </resources>
