@@ -72,6 +72,9 @@ public class SimanoService extends Service {
 	    String action = intent.getAction();
 	    if (action != null) {
 		switch (action) {
+		case "jp.ddo.masm11.simano.BOOT":
+		    // NOP
+		    break;
 		case "jp.ddo.masm11.simano.ALARM":
 		    alarm();
 		    break;
