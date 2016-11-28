@@ -24,4 +24,9 @@ public class PrefActivity extends AppCompatActivity {
 	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
 	return Integer.valueOf(settings.getString("port", "0"));
     }
+    
+    static boolean getUseIPv4Only(Context ctx) {
+	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+	return Boolean.valueOf(settings.getBoolean("use_ipv4_only", false));
+    }
 }

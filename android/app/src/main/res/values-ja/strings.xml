@@ -10,6 +10,8 @@
     <string name="hostname_summary">サーバのホスト名</string>
     <string name="port_title">ポート番号</string>
     <string name="port_summary">サーバのポート番号</string>
+    <string name="use_ipv4_only_title">IPv4 のみを使用</string>
+    <string name="use_ipv4_only_summary">サーバへの接続に IPv4 のみを使用</string>
     
     <string name="app_connecting">接続中</string>
     <string name="app_ready">動作中</string>

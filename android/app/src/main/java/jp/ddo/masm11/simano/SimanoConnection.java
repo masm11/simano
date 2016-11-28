@@ -73,13 +73,15 @@ class SimanoConnection implements Runnable {
     
     private final String hostname;
     private final int port;
+    private boolean useIPv4Only;
     private final EventListener eventListener;
     private KeepAlive ka = null;
     private boolean alarmed = false;
     
-    SimanoConnection(String hostname, int port, EventListener eventListener) {
+    SimanoConnection(String hostname, int port, boolean useIPv4Only, EventListener eventListener) {
 	this.hostname = hostname;
 	this.port = port;
+	this.useIPv4Only = useIPv4Only;
 	this.eventListener = eventListener;
     }
     
@@ -96,7 +98,7 @@ class SimanoConnection implements Runnable {
 		try {
 		    setEvent(Event.CONNECTING);
 		    
-		    sock = connectTo(hostname, port);
+		    sock = connectTo(hostname, port, useIPv4Only);
 		    sock.socket().setSoTimeout(0);
 		    
 		    ka = new KeepAlive(sock);
@@ -181,7 +183,7 @@ class SimanoConnection implements Runnable {
 	Log.i("Thread finished.");
     }
     
-    private SocketChannel connectTo(String hostname, int port)
+    private SocketChannel connectTo(String hostname, int port, boolean useIPv4Only)
 	    throws IOException {
 	IOException last_e = null;
 	
@@ -193,6 +195,9 @@ class SimanoConnection implements Runnable {
 	    Log.d("addr: %s", addr.toString());
 	
 	for (boolean use_v6: new boolean[] { true, false } ) {
+	    if (use_v6 && useIPv4Only)
+		continue;
+	    
 	    for (InetAddress addr: addrs) {
 		boolean is_v6 = addr instanceof Inet6Address;
 		if (is_v6 != use_v6)

@@ -52,9 +52,11 @@ public class SimanoService extends Service {
 	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 	String hostname = settings.getString("hostname", "localhost");
 	int port = Integer.valueOf(settings.getString("port", "0"));
+	boolean useIPv4Only = Boolean.valueOf(settings.getBoolean("use_ipv4_only", false));
 	Log.i("hostname=%s", hostname);
 	Log.i("port=%d", port);
-	setServer(hostname, port);
+	Log.i("useIPv4Only=%s", useIPv4Only);
+	setServer(hostname, port, useIPv4Only);
 	
 	Intent intent = new Intent(this, AlarmReceiver.class);
 	PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -85,7 +87,8 @@ public class SimanoService extends Service {
 		case "jp.ddo.masm11.simano.SET_SERVER":
 		    String hostname = intent.getStringExtra("jp.ddo.masm11.simano.HOSTNAME");
 		    int port = intent.getIntExtra("jp.ddo.masm11.simano.PORT", 0);
-		    setServer(hostname, port);
+		    boolean useIPv4Only = intent.getBooleanExtra("jp.ddo.masm11.simano.USE_IPV4_ONLY", false);
+		    setServer(hostname, port, useIPv4Only);
 		    break;
 		}
 	    }
@@ -113,7 +116,7 @@ public class SimanoService extends Service {
 	}
     }
     
-    private void setServer(String hostname, int port) {
+    private void setServer(String hostname, int port, boolean useIPv4Only) {
 	Log.i("hostname=%s, port=%d.", hostname, port);
 	
 	if (thread != null) {
@@ -126,7 +129,7 @@ public class SimanoService extends Service {
 	    thread = null;
 	}
 	
-	conn = new SimanoConnection(hostname, port, new SimanoConnection.EventListener() {
+	conn = new SimanoConnection(hostname, port, useIPv4Only, new SimanoConnection.EventListener() {
 	    @Override
 	    public void setEvent(SimanoConnection.Event ev) {
 		Log.d("event: %s", ev.toString());

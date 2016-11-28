@@ -75,11 +75,13 @@ public class MainActivity extends AppCompatActivity {
 	if (requestCode == 123) {
 	    String hostname = PrefActivity.getHostname(this);
 	    int port = PrefActivity.getPort(this);
+	    boolean useIPv4Only = PrefActivity.getUseIPv4Only(this);
 	    
 	    Intent intent = new Intent(this, SimanoService.class);
 	    intent.setAction("jp.ddo.masm11.simano.SET_SERVER");
 	    intent.putExtra("jp.ddo.masm11.simano.HOSTNAME", hostname);
 	    intent.putExtra("jp.ddo.masm11.simano.PORT", port);
+	    intent.putExtra("jp.ddo.masm11.simano.USE_IPV4_ONLY", useIPv4Only);
 	    startService(intent);
 	    
 	    Button btn_pref = (Button) findViewById(R.id.pref);

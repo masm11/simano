@@ -10,6 +10,8 @@
     <string name="hostname_summary">Server\'s hostname</string>
     <string name="port_title">Port Number</string>
     <string name="port_summary">Server\'s port number</string>
+    <string name="use_ipv4_only_title">Use IPv4 Only</string>
+    <string name="use_ipv4_only_summary">Use IPv4 only to connect to the server.</string>
 
     <string name="app_connecting">Connecting</string>
     <string name="app_ready">Ready</string>

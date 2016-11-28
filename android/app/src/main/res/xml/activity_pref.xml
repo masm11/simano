@@ -25,6 +25,12 @@
 	android:maxLength="5"
 	android:defaultValue="0" />
     
+    <SwitchPreference
+	android:key="use_ipv4_only"
+	android:title="@string/use_ipv4_only_title"
+	android:summary="@string/use_ipv4_only_summary"
+	android:defaultValue="false"/>
+
   </PreferenceCategory>
 
 </PreferenceScreen>
