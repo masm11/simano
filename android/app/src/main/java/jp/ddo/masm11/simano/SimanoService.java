@@ -200,7 +200,7 @@ public class SimanoService extends Service {
 	    }
 	    
 	    Notification notification = new Notification.Builder(this)
-		    .setSmallIcon(R.drawable.ic_mail_outline_white_24dp)
+		    .setSmallIcon(R.drawable.notification)
 		    .setContentTitle(getResources().getString(R.string.app_name))
 		    .setContentText(getResources().getString(R.string.new_mail))
 		    .setContentIntent(pending)

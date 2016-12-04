@@ -9,7 +9,7 @@
     <application
         android:allowBackup="true"
 	android:fullBackupContent="@xml/backupscheme"
-        android:icon="@drawable/ic_mail_outline_white_48dp"
+        android:icon="@drawable/launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
