@@ -5,11 +5,11 @@
         android:viewportHeight="24.0">
 
   <path
-      android:pathData="M 4 7 v 9 c 0 1 1 2 2 2 h 12 c 1 0 2 -1 2 -2 v -9 c 0 -1 -1 -2 -2 -2 h -12 c -1 0 -2 1 -2 2"
+      android:pathData="M 3 7 v 9 c 0 1 1 2 2 2 h 14 c 1 0 2 -1 2 -2 v -9 c 0 -1 -1 -2 -2 -2 h -14 c -1 0 -2 1 -2 2"
       android:strokeColor="#ffffff"
       android:strokeWidth="2"/>
   <path
-      android:pathData="M 4 7 L 12 12 L 20 7"
+      android:pathData="M 3 7 L 12 12 L 21 7"
       android:strokeColor="#ffffff"
       android:strokeWidth="2"/>
 

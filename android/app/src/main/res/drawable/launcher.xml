@@ -3,16 +3,19 @@
         android:height="24dp"
         android:viewportWidth="24.0"
         android:viewportHeight="24.0">
+  
   <path
-      android:pathData="M 1 5 v 13 c 0 1.5 1.5 3 3 3 h 16 c 1.5 0 3 -1.5 3 -3 v -13 c 0 -1.5 -1.5 -3 -3 -3 h -16 c -1.5 0 -3 1.5 -3 3"
+      android:pathData="M 0 12 A 12 12 0 0 0 24 12 A 12 12 0 0 0 0 12"
       android:strokeWidth="0"
+      android:strokeColor="#8888ff"
       android:fillColor="#8888ff"/>
   <path
-      android:pathData="M 4 7 v 9 c 0 1 1 2 2 2 h 12 c 1 0 2 -1 2 -2 v -9 c 0 -1 -1 -2 -2 -2 h -12 c -1 0 -2 1 -2 2"
+      android:pathData="M 4 8 v 8 c 0 1 1 2 2 2 h 12 c 1 0 2 -1 2 -2 v -8 c 0 -1 -1 -2 -2 -2 h -12 c -1 0 -2 1 -2 2"
       android:strokeColor="#ffffff"
-      android:strokeWidth="2"/>
+      android:strokeWidth="1.5"/>
   <path
-      android:pathData="M 4 7 L 12 12 L 20 7"
+      android:pathData="M 4 8 L 12 12 L 20 8"
       android:strokeColor="#ffffff"
-      android:strokeWidth="2"/>
+      android:strokeWidth="1.5"/>
+  
 </vector>
